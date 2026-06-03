@@ -28,16 +28,27 @@ def save_materi_sheets(data_list):
 
 # --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
-    if API_URL_GALERI == "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec": return []
+    if API_URL_GALERI == "PASTE_URL_APPS_SCRIPT_GALERI_LU": 
+        st.warning("⚠️ URL Galeri belum lu ganti di app.py, bro!")
+        return []
     try:
         res = requests.get(API_URL_GALERI)
+        if res.status_code != 200:
+            st.error(f"❌ Google Sheets nolak! Status Code: {res.status_code}")
+            return []
         return res.json()
-    except: return []
+    except Exception as e: 
+        st.error(f"❌ Gagal narik data dari Sheets. Erornya: {e}")
+        return []
 
 def save_galeri_sheets(data_list):
-    if API_URL_GALERI != "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec":
-        try: requests.post(API_URL_GALERI, json={"data": data_list})
-        except: pass
+    if API_URL_GALERI != "PASTE_URL_APPS_SCRIPT_GALERI_LU":
+        try: 
+            res = requests.post(API_URL_GALERI, json={"data": data_list})
+            if res.status_code != 200:
+                st.error(f"❌ Gagal nyimpen! Sheets nolak dengan kode: {res.status_code}")
+        except Exception as e: 
+            st.error(f"❌ Gagal ngirim data ke Sheets. Erornya: {e}")
 
 # Ambil data dari kedua database sekali di awal sesi
 if 'daftar_materi' not in st.session_state:
