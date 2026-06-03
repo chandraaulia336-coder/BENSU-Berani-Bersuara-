@@ -127,9 +127,9 @@ if 'chat_history' not in st.session_state: st.session_state['chat_history'] = []
 if 'feedbacks' not in st.session_state: st.session_state['feedbacks'] = []
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Tempat aman buat belajar dan cerita."
 
-# === LOGO DI SIDEBAR (POJOK KIRI ATAS FULL WIDTH) ===
+# === LOGO DI SIDEBAR (POJOK KIRI ATAS, UKURAN PAS) ===
 if os.path.exists("Logo bumper (1).png"):
-    st.sidebar.image("Logo bumper (1).png", use_container_width=True)
+    st.sidebar.image("Logo bumper (1).png", width=200)
     st.sidebar.write("")
 
 # === SIDEBAR NAVIGASI ===
@@ -146,7 +146,7 @@ if menu == "Beranda & Galeri":
     
     # LOGO HALAMAN UTAMA (UJUNG TENGAH ATAS)
     if os.path.exists("Logo bumper (1).png"):
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3 = st.columns([1, 1.5, 1])
         with col2:
             st.image("Logo bumper (1).png", use_container_width=True)
 
