@@ -164,7 +164,7 @@ if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 
 # === MENU 1: BERANDA & GALERI (DATABASE PERMANEN) ===
 if menu == "Beranda & Galeri":
-# --- LOGO DI TENGAH HALAMAN UTAMA ---
+    # --- LOGO DI TENGAH HALAMAN UTAMA ---
 import os
 
 # Bikin 3 kolom (kolom kiri kecil, tengah gede buat logo, kanan kecil)
