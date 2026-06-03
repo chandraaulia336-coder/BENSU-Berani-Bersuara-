@@ -6,17 +6,15 @@ import os
 # Setup Halaman
 st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 
-# Fungsi Rahasia buat ngebaca foto lokal jadiin Wallpaper Background
+# Fungsi buat ngebaca foto lokal jadiin Wallpaper Background
 def get_base64_bg(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
             encoded = base64.b64encode(img_file.read()).decode()
         return f"data:image/webp;base64,{encoded}"
-    # Fallback pake link unsplash lama kalo filenya belum ditaruh di folder
     return "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000"
 
-# Membaca file gambar yang lu upload tadi
-# CATATAN: Pastikan nama file foto di folder lu persis '25117787.webp'
+# Membaca file gambar wallpaper Tugu
 bg_image = get_base64_bg("25117787.webp")
 
 # CSS buat styling Wallpaper, Overlay, dan Elemen Ombak
@@ -92,10 +90,8 @@ if is_admin:
 if menu == "Beranda & Galeri":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.markdown('<p class="header-title">Ruang Kita 🚀</p>', unsafe_allow_html=True)
-    # Tagline dinamis yang bisa diubah admin
     st.markdown(f'<p class="sub-header">{st.session_state["tagline"]}</p>', unsafe_allow_html=True)
     
-    # Edit Tagline (KHUSUS ADMIN)
     if is_admin:
         with st.expander("🛠️ Admin Panel: Edit Tagline Web", expanded=False):
             tagline_baru = st.text_input("Ubah kalimat sub-header/tagline web:", value=st.session_state['tagline'])
@@ -122,20 +118,18 @@ if menu == "Beranda & Galeri":
                 st.success("Mantap, foto berhasil mejeng di galeri!")
                 st.rerun()
 
-# === MENU 2: SUBSTANSI MATERI (BISA EDIT & UPLOAD FOTO) ===
+# === MENU 2: SUBSTANSI MATERI ===
 elif menu == "Substansi Materi":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("📚 Substansi Materi")
     st.write("Materi asik yang nggak ngebosenin buat bekal masa depan lu.")
     
-    # Nampilin Materi dari sistem
     for m in st.session_state['materi']:
         with st.expander(m["judul"]):
             if m.get("foto") is not None:
                 st.image(m["foto"], use_container_width=True)
             st.write(m["isi"])
             
-    # Panel Kelola Materi (KHUSUS ADMIN)
     if is_admin:
         st.divider()
         with st.expander("🛠️ Admin Panel: Kelola & Edit Materi", expanded=True):
@@ -158,8 +152,7 @@ elif menu == "Substansi Materi":
                     opsi_materi = [m["judul"] for m in st.session_state['materi']]
                     materi_terpilih = st.selectbox("Pilih materi yang mau di-update:", opsi_materi)
                     
-                    # Ambil indeks data materi lawas
-                    idx = opsi_materi.index(materi_terpilled = materi_terpilih)
+                    idx = opsi_materi.index(materi_terpilih)
                     data_lama = st.session_state['materi'][idx]
                     
                     judul_edit = st.text_input("Edit Judul", value=data_lama["judul"])
@@ -182,11 +175,17 @@ elif menu == "Substansi Materi":
                 else:
                     st.info("Belum ada materi buat diedit.")
 
-# === MENU 3: RUANG CERITA ===
+# === MENU 3: RUANG CERITA (ADA FOTO BARU) ===
 elif menu == "Ruang Cerita (Anonim)":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("💬 Ruang Cerita")
     st.write("Ada beban pikiran? Ceritain aja di sini. 100% anonim, privasi lu aman.")
+    
+    # Nampilin foto Duta GenRe biar halaman lebih menarik & terpercaya
+    img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
+    with img_col2:
+        if os.path.exists("genre_juara.jpg"):
+            st.image("genre_juara.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
     
     with st.form("cerita_form", clear_on_submit=True):
         user_input = st.text_area("Ketik cerita lu di sini...", height=150, placeholder="Gue ngerasa cape banget...")
@@ -209,12 +208,18 @@ elif menu == "Ruang Cerita (Anonim)":
                 st.session_state['chat_history'].append({"role": "Admin", "text": admin_balasan, "time": datetime.now().strftime("%H:%M")})
                 st.rerun()
 
-# === MENU 4: KRITIK & SARAN ===
+# === MENU 4: KRITIK & SARAN (ADA FOTO BARU) ===
 elif menu == "Kritik & Saran":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("💡 Kotak Saran")
     st.write("Bantu kita bikin web ini makin asik dan nyaman buat lu semua.")
     
+    # Nampilin foto Duta GenRe di menu saran juga
+    img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
+    with img_col2:
+        if os.path.exists("genre_juara.jpg"):
+            st.image("genre_juara.jpg", caption="Yuk sampaikan kritik & saran terbaikmu!", use_container_width=True)
+            
     with st.form("feedback_form", clear_on_submit=True):
         feedback = st.text_area("Ada masukan, ide, atau nemu bug? Tulis di sini...", height=100)
         if st.form_submit_button("Kirim Masukan 🚀") and feedback:
