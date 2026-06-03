@@ -4,17 +4,6 @@ import base64
 import os
 import requests
 
-# --- LOGO DI POJOK KIRI ATAS MENU (SIDEBAR) ---
-import os
-
-if os.path.exists("Logo bumper (1).jpg"):
-    st.sidebar.image("Logo bumper (1).jpg", use_container_width=True)
-    # Kasih jarak dikit ke menunya
-    st.sidebar.write("")
-
-# Setup Halaman
-st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
-
 # ==========================================================
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
@@ -37,15 +26,6 @@ def fetch_materi_sheets():
         return []
 
 def save_materi_sheets(data_list):
-    if API_URL_MATERI != "PASTE_URL_APPS_SCRIPT_MATERI_LU":
-        try: 
-            res = requests.post(API_URL_MATERI, json={"data": data_list})
-            if res.status_code != 200:
-                st.error(f"❌ Gagal nyimpen Materi! Sheets nolak dengan kode: {res.status_code}")
-        except Exception as e: 
-            st.error(f"❌ Gagal ngirim data MATERI ke Sheets. Erornya: {e}")
-
-def save_materi_sheets(data_list):
     if API_URL_MATERI != "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec":
         try: 
             res = requests.post(API_URL_MATERI, json={"data": data_list})
@@ -56,7 +36,7 @@ def save_materi_sheets(data_list):
 
 # --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
-    if API_URL_GALERI == "PASTE_URL_APPS_SCRIPT_GALERI_LU": 
+    if API_URL_GALERI == "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec": 
         st.warning("⚠️ URL Galeri belum lu ganti di app.py, bro!")
         return []
     try:
@@ -153,6 +133,11 @@ if 'chat_history' not in st.session_state: st.session_state['chat_history'] = []
 if 'feedbacks' not in st.session_state: st.session_state['feedbacks'] = []
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Tempat aman buat belajar dan cerita."
 
+# === LOGO DI SIDEBAR ===
+if os.path.exists("Logo bumper (1).jpg"):
+    st.sidebar.image("Logo bumper (1).jpg", use_container_width=True)
+    st.sidebar.write("")
+
 # === SIDEBAR NAVIGASI ===
 st.sidebar.title("Navigasi 🧭")
 menu = st.sidebar.radio("Mau ke mana?", ["Beranda & Galeri", "Substansi Materi", "Ruang Cerita (Anonim)", "Kritik & Saran"])
@@ -164,15 +149,13 @@ if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 
 # === MENU 1: BERANDA & GALERI (DATABASE PERMANEN) ===
 if menu == "Beranda & Galeri":
+    
     # --- LOGO DI TENGAH HALAMAN UTAMA ---
-import os
+    col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
+    with col_l2:
+        if os.path.exists("Logo bumper (1).jpg"):
+            st.image("Logo bumper (1).jpg", use_container_width=True)
 
-# Bikin 3 kolom (kolom kiri kecil, tengah gede buat logo, kanan kecil)
-col_l1, col_l2, col_l3 = st.columns([1, 2, 1]) 
-
-with col_l2: # Logonya masuk ke kolom tengah
-    if os.path.exists("Logo bumper (1).jpg"):
-        st.image("Logo bumper (1).jpg", use_container_width=True)
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.markdown('<p class="header-title">Ruang Kita 🚀</p>', unsafe_allow_html=True)
     st.markdown(f'<p class="sub-header">{st.session_state["tagline"]}</p>', unsafe_allow_html=True)
@@ -344,7 +327,8 @@ elif menu == "Ruang Cerita (Anonim)":
                 else:
                     st.markdown("*🕒 Belum ada respon dari admin. Sabar ya, bre!*")
                 st.write("")
-elif menu == "Kritik & Saran": # <-- Sesuaikan nama menunya sama punya lu
+
+elif menu == "Kritik & Saran": 
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("📥 Kotak Kritik & Saran")
     
