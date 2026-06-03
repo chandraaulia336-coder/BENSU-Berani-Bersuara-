@@ -91,6 +91,24 @@ def save_cerita_sheets(data_list):
         except:
             pass
 
+API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
+
+# --- FUNGSI DATABASE KOTAK KRITIK ---
+def fetch_kritik_sheets():
+    if API_URL_KRITIK == "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec": 
+        return []
+    try:
+        res = requests.get(API_URL_KRITIK)
+        if res.status_code == 200: return res.json()
+        return []
+    except: return []
+
+def save_kritik_sheets(data_list):
+    if API_URL_KRITIK != "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec":
+        try: 
+            requests.post(API_URL_KRITIK, json={"data": data_list})
+        except: pass
+
 # Ambil data dari kedua database sekali di awal sesi
 if 'daftar_materi' not in st.session_state:
     st.session_state['daftar_materi'] = fetch_materi_sheets()
@@ -309,15 +327,37 @@ elif menu == "Ruang Cerita (Anonim)":
                 else:
                     st.markdown("*🕒 Belum ada respon dari admin. Sabar ya, bre!*")
                 st.write("")
-elif menu == "Kritik & Saran":
+elif menu == "Kritik & Saran": # <-- Sesuaikan nama menunya sama punya lu
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
-    st.title("💡 Kotak Saran")
+    st.title("📥 Kotak Kritik & Saran")
+    
+    # --- FOTO DI-RESCUE, JANGAN SAMPAI HILANG LAGI WKWK ---
     img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
     with img_col2:
-        if os.path.exists("genre_juara.jpg"): st.image("genre_juara.jpg", use_container_width=True)
+        if os.path.exists("genre_juara1.jpg"): 
+            st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
             
-    with st.form("feedback_form", clear_on_submit=True):
-        feedback = st.text_area("Ada masukan?")
-        if st.form_submit_button("Kirim Masukan 🚀") and feedback:
-            st.session_state['feedbacks'].append({"isi": feedback, "waktu": datetime.now().strftime("%d/%m/%Y %H:%M")})
-            st.success("Masukan diterima!")
+    st.write("Punya masukan, kritik tajam, atau saran buat perkembangan kita? Tumpahin di sini, bre. Identitas lu aman kok!")
+    
+    # Ambil data kritik lama dulu biar gak ketimpa zonk
+    daftar_kritik = fetch_kritik_sheets()
+    
+    with st.form("kritik_form", clear_on_submit=True):
+        topik = st.selectbox("Pilih Topik", ["Pelayanan/Konseling", "Konten Materi", "Tampilan Web", "Lainnya"])
+        isi_kritik = st.text_area("Tulis kritik & saran lu di sini...")
+        
+        if st.form_submit_button("Kirim Masukan 🚀") and isi_kritik:
+            waktu_masuk = datetime.now().strftime("%d/%m/%Y %H:%M")
+            
+            # Susun data kritik baru
+            kritik_baru = {
+                "Waktu": waktu_masuk,
+                "Topik": topik,
+                "Isi Kritik": isi_kritik
+            }
+            
+            # Gabungin terus kirim ke Sheets
+            daftar_kritik.append(kritik_baru)
+            save_kritik_sheets(daftar_kritik)
+            
+            st.success("Tengkyu bre! Kritik & saran lu udah masuk ke meja admin buat bahan evaluasi. 🔥")
