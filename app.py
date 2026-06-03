@@ -73,7 +73,7 @@ def save_galeri_sheets(data_list):
 
 # --- FUNGSI DATABASE RUANG CERITA (VERSI DETEKTIF) ---
 def fetch_cerita_sheets():
-    if API_URL_CERITA == "PASTE_URL_APPS_SCRIPT_CERITA_LU": 
+    if API_URL_CERITA == "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec": 
         st.warning("⚠️ URL Cerita belum lu ganti di app.py, bro!")
         return []
     try:
