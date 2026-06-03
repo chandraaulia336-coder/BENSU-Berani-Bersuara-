@@ -15,7 +15,7 @@ API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5w
 
 # --- FUNGSI DATABASE MATERI (VERSI DETEKTIF EROR) ---
 def fetch_materi_sheets():
-    if API_URL_MATERI == "PASTE_URL_APPS_SCRIPT_MATERI_LU": 
+    if API_URL_MATERI == "https://script.google.com/macros/s/AKfycbwk84Ns9a0COzFLhGoc8ElgkxL6phdebe3teM-Xcm9Z06l1_ihYcPN97o1eXmKZg8bF/exec": 
         st.warning("⚠️ URL Materi belum lu ganti di app.py, bro!")
         return []
     try:
