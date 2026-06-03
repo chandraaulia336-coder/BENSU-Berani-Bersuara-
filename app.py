@@ -29,7 +29,7 @@ def fetch_materi_sheets():
         return []
 
 def save_materi_sheets(data_list):
-    if API_URL_MATERI != "PASTE_URL_APPS_SCRIPT_MATERI_LU":
+    if API_URL_MATERI != "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec":
         try: 
             res = requests.post(API_URL_MATERI, json={"data": data_list})
             if res.status_code != 200:
