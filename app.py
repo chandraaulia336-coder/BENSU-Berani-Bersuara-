@@ -36,7 +36,7 @@ def save_materi_sheets(data_list):
         except Exception as e: 
             st.error(f"❌ Gagal ngirim data MATERI ke Sheets. Erornya: {e}")
 
-# --- FUNGSI DATABASE GALERI (SUDAH DI-FIX) ---
+# --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
     if not API_URL_GALERI.startswith("https://script.google.com"): 
         st.warning("⚠️ URL Galeri belum lu ganti di app.py dengan benar, bro!")
@@ -128,8 +128,8 @@ if 'feedbacks' not in st.session_state: st.session_state['feedbacks'] = []
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Tempat aman buat belajar dan cerita."
 
 # === LOGO DI SIDEBAR ===
-if os.path.exists("Logo bumper (1).jpg"):
-    st.image("Logo bumper (1).jpg", width=180)
+if os.path.exists("Logo bumper (1).png"):
+    st.sidebar.image("Logo bumper (1).png", width=100)
     st.sidebar.write("")
 
 # === SIDEBAR NAVIGASI ===
@@ -143,10 +143,9 @@ if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 
 # === MENU 1: BERANDA & GALERI ===
 if menu == "Beranda & Galeri":
-    col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
-    with col_l2:
-        if os.path.exists("Logo bumper (1).png"):
-            st.image("Logo bumper (1).png", use_container_width=True)
+    # LOGO HALAMAN UTAMA (Kecil & Di Atas Wave)
+    if os.path.exists("Logo bumper (1).png"):
+        st.image("Logo bumper (1).png", width=130)
 
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.markdown('<p class="header-title">Ruang Kita 🚀</p>', unsafe_allow_html=True)
