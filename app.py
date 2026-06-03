@@ -9,12 +9,12 @@ st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 
 # ==========================================
 # PASTE URL APLIKASI WEB APPS SCRIPT LU DI SINI
-API_URL = "PASTE_URL_WEB_APP_LU_DI_SINI"
+API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB"
 # ==========================================
 
 # Fungsi Ambil Data dari Sheets via Web App
 def fetch_materi_sheets():
-    if API_URL == "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB":
+    if API_URL == "PASTE_URL_WEB_APP_LU_DI_SINI":
         return []
     try:
         res = requests.get(API_URL)
@@ -88,7 +88,7 @@ if menu == "Beranda & Galeri":
         for i, img in enumerate(st.session_state['gallery']): cols[i % 3].image(img, use_container_width=True)
     else: st.info("Belum ada foto di galeri.")
 
-# === MENU 2: SUBSTANSI MATERI (DATABASE PERMANEN) ===
+# === MENU 2: SUBSTANSI MATERI ===
 elif menu == "Substansi Materi":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("📚 Substansi Materi")
@@ -96,9 +96,17 @@ elif menu == "Substansi Materi":
     if st.session_state['daftar_materi']:
         for m in st.session_state['daftar_materi']:
             with st.expander(m["Judul"]):
-                if m.get("Foto") and m["Foto"] != "None":
-                    st.write(f"*(Link Foto Dokumentasi: {m['Foto']} )*")
                 st.write(m["Isi"])
+                
+                # Cek dan pecah link foto kalau ada banyak (dipisahkan tanda koma)
+                if m.get("Foto") and m["Foto"] != "None":
+                    list_foto = [url.strip() for url in m["Foto"].split(",") if url.strip() and url.strip() != "None"]
+                    if list_foto:
+                        st.write("---")
+                        # Nampilin foto berjajar memanfaatkan kolom streamlit
+                        cols_foto = st.columns(len(list_foto))
+                        for idx_f, url_f in enumerate(list_foto):
+                            cols_foto[idx_f].image(url_f, use_container_width=True)
     else:
         st.info("Database kosong atau kamu belum setting URL Apps Script.")
             
@@ -110,11 +118,17 @@ elif menu == "Substansi Materi":
             if aksi_materi == "Tambah Materi Baru":
                 judul_baru = st.text_input("Judul Materi Baru")
                 isi_baru = st.text_area("Isi Materi Baru")
-                link_foto = st.text_input("Link Foto Pendukung (Opsional / Masukan URL)")
+                
+                st.write("🖼️ **Link Foto Pendukung (Ambil dari Direct Link Postimages):**")
+                link_f1 = st.text_input("Link Foto 1", placeholder="https://i.postimg.cc/...jpg")
+                link_f2 = st.text_input("Link Foto 2 (Opsional)", placeholder="https://i.postimg.cc/...jpg")
+                link_f3 = st.text_input("Link Foto 3 (Opsional)", placeholder="https://i.postimg.cc/...jpg")
                 
                 if st.button("Posting Permanen"):
                     if judul_baru and isi_baru:
-                        new_item = {"Judul": judul_baru, "Isi": isi_baru, "Foto": link_foto if link_foto else "None"}
+                        # Gabungin link foto pake tanda koma biar kesimpen jadi 1 teks di Sheets
+                        foto_gabung = ",".join([link_f1 if link_f1 else "None", link_f2 if link_f2 else "None", link_f3 if link_f3 else "None"])
+                        new_item = {"Judul": judul_baru, "Isi": isi_baru, "Foto": foto_gabung}
                         st.session_state['daftar_materi'].append(new_item)
                         save_materi_sheets(st.session_state['daftar_materi'])
                         st.success("Sukses disimpan permanen ke Google Sheets!")
@@ -129,11 +143,20 @@ elif menu == "Substansi Materi":
                     
                     judul_edit = st.text_input("Edit Judul", value=data_lama["Judul"])
                     isi_edit = st.text_area("Edit Isi", value=data_lama["Isi"])
-                    foto_edit = st.text_input("Edit Link Foto", value=data_lama["Foto"])
+                    
+                    # Pecah dulu data lama pas mau diedit biar masuk ke masing-masing kolom input
+                    foto_lama = data_lama["Foto"].split(",") if "," in data_lama["Foto"] else [data_lama["Foto"], "None", "None"]
+                    while len(foto_lama) < 3: foto_lama.append("None")
+                    
+                    st.write("🖼️ **Edit Link Foto:**")
+                    edit_f1 = st.text_input("Link Foto 1", value=foto_lama[0] if foto_lama[0] != "None" else "")
+                    edit_f2 = st.text_input("Link Foto 2", value=foto_lama[1] if foto_lama[1] != "None" else "")
+                    edit_f3 = st.text_input("Link Foto 3", value=foto_lama[2] if foto_lama[2] != "None" else "")
                     
                     col_save, col_del = st.columns(2)
                     if col_save.button("Simpan Perubahan ✅"):
-                        st.session_state['daftar_materi'][idx] = {"Judul": judul_edit, "Isi": isi_edit, "Foto": foto_edit}
+                        foto_edit_gabung = ",".join([edit_f1 if edit_f1 else "None", edit_f2 if edit_f2 else "None", edit_f3 if edit_f3 else "None"])
+                        st.session_state['daftar_materi'][idx] = {"Judul": judul_edit, "Isi": isi_edit, "Foto": foto_edit_gabung}
                         save_materi_sheets(st.session_state['daftar_materi'])
                         st.success("Perubahan disimpan permanen!")
                         st.rerun()
