@@ -9,22 +9,33 @@ st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 
 # ==========================================================
 # PASTE MASING-MASING URL WEB APP LU DI SINI
-API_URL_MATERI = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB"
+API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
 API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"
 # ==========================================================
 
-# --- FUNGSI DATABASE MATERI ---
+# --- FUNGSI DATABASE MATERI (VERSI DETEKTIF EROR) ---
 def fetch_materi_sheets():
-    if API_URL_MATERI == "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB": return []
+    if API_URL_MATERI == "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec": 
+        st.warning("⚠️ URL Materi belum lu ganti di app.py, bro!")
+        return []
     try:
         res = requests.get(API_URL_MATERI)
+        if res.status_code != 200:
+            st.error(f"❌ Google Sheets nolak Materi! Status Code: {res.status_code}")
+            return []
         return res.json()
-    except: return []
+    except Exception as e: 
+        st.error(f"❌ Gagal narik data MATERI dari Sheets. Erornya: {e}")
+        return []
 
 def save_materi_sheets(data_list):
-    if API_URL_MATERI != "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB":
-        try: requests.post(API_URL_MATERI, json={"data": data_list})
-        except: pass
+    if API_URL_MATERI != "PASTE_URL_APPS_SCRIPT_MATERI_LU":
+        try: 
+            res = requests.post(API_URL_MATERI, json={"data": data_list})
+            if res.status_code != 200:
+                st.error(f"❌ Gagal nyimpen Materi! Sheets nolak dengan kode: {res.status_code}")
+        except Exception as e: 
+            st.error(f"❌ Gagal ngirim data MATERI ke Sheets. Erornya: {e}")
 
 # --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
