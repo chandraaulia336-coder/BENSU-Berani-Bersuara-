@@ -36,7 +36,7 @@ def save_materi_sheets(data_list):
 
 # --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
-    if API_URL_GALERI == "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec": 
+    if API_URL_GALERI == "PASTE_URL_APPS_SCRIPT_GALERI_LU": 
         st.warning("⚠️ URL Galeri belum lu ganti di app.py, bro!")
         return []
     try:
