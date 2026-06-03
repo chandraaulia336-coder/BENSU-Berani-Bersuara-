@@ -8,12 +8,14 @@ import requests
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
 API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"
+API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"
+API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
 # ==========================================================
 
-# --- FUNGSI DATABASE MATERI (VERSI DETEKTIF EROR) ---
+# --- FUNGSI DATABASE MATERI ---
 def fetch_materi_sheets():
-    if API_URL_MATERI == "https://script.google.com/macros/s/AKfycbwk84Ns9a0COzFLhGoc8ElgkxL6phdebe3teM-Xcm9Z06l1_ihYcPN97o1eXmKZg8bF/exec": 
-        st.warning("⚠️ URL Materi belum lu ganti di app.py, bro!")
+    if not API_URL_MATERI.startswith("https://script.google.com"): 
+        st.warning("⚠️ URL Materi belum lu ganti di app.py dengan benar, bro!")
         return []
     try:
         res = requests.get(API_URL_MATERI)
@@ -26,7 +28,7 @@ def fetch_materi_sheets():
         return []
 
 def save_materi_sheets(data_list):
-    if API_URL_MATERI != "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec":
+    if API_URL_MATERI.startswith("https://script.google.com"):
         try: 
             res = requests.post(API_URL_MATERI, json={"data": data_list})
             if res.status_code != 200:
@@ -34,56 +36,48 @@ def save_materi_sheets(data_list):
         except Exception as e: 
             st.error(f"❌ Gagal ngirim data MATERI ke Sheets. Erornya: {e}")
 
-# --- FUNGSI DATABASE GALERI ---
+# --- FUNGSI DATABASE GALERI (SUDAH DI-FIX) ---
 def fetch_galeri_sheets():
-    if API_URL_GALERI == "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec": 
-        st.warning("⚠️ URL Galeri belum lu ganti di app.py, bro!")
+    if not API_URL_GALERI.startswith("https://script.google.com"): 
+        st.warning("⚠️ URL Galeri belum lu ganti di app.py dengan benar, bro!")
         return []
     try:
         res = requests.get(API_URL_GALERI)
         if res.status_code != 200:
-            st.error(f"❌ Google Sheets nolak! Status Code: {res.status_code}")
+            st.error(f"❌ Google Sheets nolak Galeri! Status Code: {res.status_code}")
             return []
         return res.json()
     except Exception as e: 
-        st.error(f"❌ Gagal narik data dari Sheets. Erornya: {e}")
+        st.error(f"❌ Gagal narik data GALERI dari Sheets. Erornya: {e}")
         return []
 
 def save_galeri_sheets(data_list):
-    if API_URL_GALERI != "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec":
+    if API_URL_GALERI.startswith("https://script.google.com"):
         try: 
             res = requests.post(API_URL_GALERI, json={"data": data_list})
             if res.status_code != 200:
-                st.error(f"❌ Gagal nyimpen! Sheets nolak dengan kode: {res.status_code}")
+                st.error(f"❌ Gagal nyimpen Galeri! Sheets nolak dengan kode: {res.status_code}")
         except Exception as e: 
-            st.error(f"❌ Gagal ngirim data ke Sheets. Erornya: {e}")
-
-API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"
+            st.error(f"❌ Gagal ngirim data GALERI ke Sheets. Erornya: {e}")
 
 # --- FUNGSI DATABASE RUANG CERITA ---
 def fetch_cerita_sheets():
-    if API_URL_CERITA == "PASTE_URL_APPS_SCRIPT_CERITA_LU": 
+    if not API_URL_CERITA.startswith("https://script.google.com"): 
         return []
     try:
         res = requests.get(API_URL_CERITA)
-        if res.status_code == 200:
-            return res.json()
+        if res.status_code == 200: return res.json()
         return []
-    except:
-        return []
+    except: return []
 
 def save_cerita_sheets(data_list):
-    if API_URL_CERITA != "PASTE_URL_APPS_SCRIPT_CERITA_LU":
-        try: 
-            requests.post(API_URL_CERITA, json={"data": data_list})
-        except:
-            pass
-
-API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
+    if API_URL_CERITA.startswith("https://script.google.com"):
+        try: requests.post(API_URL_CERITA, json={"data": data_list})
+        except: pass
 
 # --- FUNGSI DATABASE KOTAK KRITIK ---
 def fetch_kritik_sheets():
-    if API_URL_KRITIK == "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec": 
+    if not API_URL_KRITIK.startswith("https://script.google.com"): 
         return []
     try:
         res = requests.get(API_URL_KRITIK)
@@ -92,12 +86,12 @@ def fetch_kritik_sheets():
     except: return []
 
 def save_kritik_sheets(data_list):
-    if API_URL_KRITIK != "PASTE_URL_APPS_SCRIPT_KRITIK_LU":
-        try: 
-            requests.post(API_URL_KRITIK, json={"data": data_list})
+    if API_URL_KRITIK.startswith("https://script.google.com"):
+        try: requests.post(API_URL_KRITIK, json={"data": data_list})
         except: pass
 
-# Ambil data dari kedua database sekali di awal sesi
+
+# --- INISIALISASI SESSION STATE ---
 if 'daftar_materi' not in st.session_state:
     st.session_state['daftar_materi'] = fetch_materi_sheets()
 if 'daftar_galeri' not in st.session_state:
@@ -147,10 +141,8 @@ admin_pass = st.sidebar.text_input("Punya Kode Sesi?", type="password")
 is_admin = admin_pass == "admin123" 
 if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 
-# === MENU 1: BERANDA & GALERI (DATABASE PERMANEN) ===
+# === MENU 1: BERANDA & GALERI ===
 if menu == "Beranda & Galeri":
-    
-    # --- LOGO DI TENGAH HALAMAN UTAMA ---
     col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
     with col_l2:
         if os.path.exists("Logo bumper (1).jpg"):
@@ -171,7 +163,6 @@ if menu == "Beranda & Galeri":
     st.divider()
     st.subheader("📸 Galeri Aksi")
     
-    # Menampilkan foto permanen dari Google Sheets Galeri
     if st.session_state['daftar_galeri']:
         cols = st.columns(3)
         for i, url_img in enumerate(st.session_state['daftar_galeri']):
@@ -182,7 +173,7 @@ if menu == "Beranda & Galeri":
     if is_admin:
         st.write("")
         with st.expander("🛠️ Admin Panel: Kelola Foto Galeri", expanded=False):
-            st.write("🖼️ **Tambah Foto Baru (Gunakan Direct Link Postimages):**")
+            st.write("🖼️ **Tambah Foto Baru:**")
             link_galeri_baru = st.text_input("Masukkan URL Gambar", placeholder="https://i.postimg.cc/...jpg")
             if st.button("Pajang di Galeri Permanen 🚀"):
                 if link_galeri_baru:
@@ -273,7 +264,7 @@ elif menu == "Substansi Materi":
                         st.warning("Materi dihapus permanen!")
                         st.rerun()
 
-# === MENU 3 & 4 ===
+# === MENU 3: RUANG CERITA ===
 elif menu == "Ruang Cerita (Anonim)":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("💬 Ruang Cerita")
@@ -283,43 +274,28 @@ elif menu == "Ruang Cerita (Anonim)":
         if os.path.exists("genre_juara1.jpg"): 
             st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
     
-    # 1. Ambil semua data cerita lama dari Google Sheets
     daftar_cerita = fetch_cerita_sheets()
     
-    # Form input cerita baru
     with st.form("cerita_form", clear_on_submit=True):
         user_input = st.text_area("Ketik cerita/curhatan lu di sini (tenang, anonim kok)...")
         if st.form_submit_button("Kirim Cerita 💌") and user_input:
             waktu_sekarang = datetime.now().strftime("%d/%m/%Y %H:%M")
-            
-            # Bikin struktur data baru (Respon Admin dikosongin dulu)
-            cerita_baru = {
-                "Waktu": waktu_sekarang, 
-                "Cerita": user_input, 
-                "Respon Admin": ""
-            }
-            
-            # Gabungin data baru ke list lama, lalu push ke Sheets
+            cerita_baru = {"Waktu": waktu_sekarang, "Cerita": user_input, "Respon Admin": ""}
             daftar_cerita.append(cerita_baru)
             save_cerita_sheets(daftar_cerita)
-            
             st.success("Cerita lu udah meluncur ke database admin, bre! Tunggu direspon ya.")
-            st.rerun() # Paksa refresh biar langsung muncul di bawah
+            st.rerun()
             
     st.write("---")
     st.subheader("📚 Jejak Cerita & Respon Admin")
     
-    # 2. Tampilkan semua cerita beserta respon dari admin
     if not daftar_cerita:
         st.info("Belum ada cerita yang masuk nih. Jadi yang pertama curhat yuk!")
     else:
-        # Tampilkan dari yang paling baru (dibalik urutannya)
         for item in reversed(daftar_cerita):
             with st.container():
                 st.markdown(f"**👤 Anonim** *({item.get('Waktu', '-')})*")
                 st.info(item.get("Cerita", ""))
-                
-                # Ngecek apakah kolom 'Respon Admin' di Google Sheets udah diisi atau belum
                 respon = item.get("Respon Admin", "").strip()
                 if respon:
                     st.markdown("**👑 Respon Admin:**")
@@ -328,11 +304,11 @@ elif menu == "Ruang Cerita (Anonim)":
                     st.markdown("*🕒 Belum ada respon dari admin. Sabar ya, bre!*")
                 st.write("")
 
+# === MENU 4: KRITIK & SARAN ===
 elif menu == "Kritik & Saran": 
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("📥 Kotak Kritik & Saran")
     
-    # --- FOTO DUTA GENRE ---
     img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
     with img_col2:
         if os.path.exists("genre_juara1.jpg"): 
@@ -340,7 +316,6 @@ elif menu == "Kritik & Saran":
             
     st.write("Punya masukan, kritik tajam, atau saran buat perkembangan kita? Tumpahin di sini, bre. Identitas lu aman kok!")
     
-    # Ambil data kritik lama dulu biar gak ketimpa zonk
     daftar_kritik = fetch_kritik_sheets()
     
     with st.form("kritik_form", clear_on_submit=True):
@@ -349,26 +324,12 @@ elif menu == "Kritik & Saran":
         
         if st.form_submit_button("Kirim Masukan 🚀") and isi_kritik:
             waktu_masuk = datetime.now().strftime("%d/%m/%Y %H:%M")
-            
-            # Susun data kritik baru
-            kritik_baru = {
-                "Waktu": waktu_masuk,
-                "Topik": topik,
-                "Isi Kritik": isi_kritik
-            }
-            
-            # Gabungin terus kirim ke Sheets
+            kritik_baru = {"Waktu": waktu_masuk, "Topik": topik, "Isi Kritik": isi_kritik}
             daftar_kritik.append(kritik_baru)
             save_kritik_sheets(daftar_kritik)
-            
             st.success("Tengkyu bre! Kritik & saran lu udah masuk ke meja admin buat bahan evaluasi. 🔥")
 
-    # ====================================================================
-    # --- TOMBOL CONTACT PERSON (CHAT LANGSUNG) ---
-    # ====================================================================
     st.write("---")
     st.subheader("📞 Layanan Pengaduan & Konseling Privat")
     st.write("Mau konseling lebih mendalam, butuh bantuan cepat, atau pengen ngobrol langsung secara personal? Langsung klik tombol di bawah ini buat terhubung ke WhatsApp Admin, bre!")
-    
-    # Tombol interaktif langsung nge-link ke WA lu
     st.link_button("Hubungi Admin via WhatsApp 💬", "https://wa.me/qr/RTCENRAXQVZFM1", use_container_width=True)
