@@ -28,14 +28,14 @@ def save_materi_sheets(data_list):
 
 # --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
-    if API_URL_GALERI == "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTCVPrrShIvIUuEcSH-RZAWo_Wi2AQZTUfe-ezizagdeuZqnV97qSCmx6GV2LR1VtPN-ZftSIQU0yGO_52g4gqwq2Nm-0A_RBcZ9CYUEF6zYo2ZZelit0oXLUdt8zkfOoNLMFjWo9r2EIe6MKZj1U8CFGZgnySznQPl98Kn19JQmFbpP9GiVzqaGfHNgEAGrqh9fPUNLdk4Vfl52AReOQg6sXhmw9TMeks8CZ43JR_t5YVrqzeyZ17VRW5E-hlmpBqWh8dze4DwLTnExe5lmMXRWodQlQ&lib=MUzcxSDqFhUG0ywdBbYeaNiSFgaMB1syB": return []
+    if API_URL_GALERI == "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec": return []
     try:
         res = requests.get(API_URL_GALERI)
         return res.json()
     except: return []
 
 def save_galeri_sheets(data_list):
-    if API_URL_GALERI != "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTCVPrrShIvIUuEcSH-RZAWo_Wi2AQZTUfe-ezizagdeuZqnV97qSCmx6GV2LR1VtPN-ZftSIQU0yGO_52g4gqwq2Nm-0A_RBcZ9CYUEF6zYo2ZZelit0oXLUdt8zkfOoNLMFjWo9r2EIe6MKZj1U8CFGZgnySznQPl98Kn19JQmFbpP9GiVzqaGfHNgEAGrqh9fPUNLdk4Vfl52AReOQg6sXhmw9TMeks8CZ43JR_t5YVrqzeyZ17VRW5E-hlmpBqWh8dze4DwLTnExe5lmMXRWodQlQ&lib=MUzcxSDqFhUG0ywdBbYeaNiSFgaMB1syB":
+    if API_URL_GALERI != "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec":
         try: requests.post(API_URL_GALERI, json={"data": data_list})
         except: pass
 
