@@ -4,6 +4,14 @@ import base64
 import os
 import requests
 
+# --- LOGO DI POJOK KIRI ATAS MENU (SIDEBAR) ---
+import os
+
+if os.path.exists("Logo bumper (1).jpg"):
+    st.sidebar.image("Logo bumper (1).jpg", use_container_width=True)
+    # Kasih jarak dikit ke menunya
+    st.sidebar.write("")
+
 # Setup Halaman
 st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 
@@ -156,6 +164,15 @@ if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 
 # === MENU 1: BERANDA & GALERI (DATABASE PERMANEN) ===
 if menu == "Beranda & Galeri":
+# --- LOGO DI TENGAH HALAMAN UTAMA ---
+import os
+
+# Bikin 3 kolom (kolom kiri kecil, tengah gede buat logo, kanan kecil)
+col_l1, col_l2, col_l3 = st.columns([1, 2, 1]) 
+
+with col_l2: # Logonya masuk ke kolom tengah
+    if os.path.exists("Logo bumper (1).jpg"):
+        st.image("Logo bumper (1).jpg", use_container_width=True)
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.markdown('<p class="header-title">Ruang Kita 🚀</p>', unsafe_allow_html=True)
     st.markdown(f'<p class="sub-header">{st.session_state["tagline"]}</p>', unsafe_allow_html=True)
