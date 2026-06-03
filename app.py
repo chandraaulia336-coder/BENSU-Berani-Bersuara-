@@ -64,7 +64,7 @@ if 'materi' not in st.session_state:
         {
             "judul": "🚫 Triad KRR", 
             "isi": "- **Pernikahan Dini:** Masa muda tuh buat eksplor, bukan buru-buru nikah.\n- **Seks Bebas:** Jaga diri, jaga masa depan.\n- **NAPZA:** Narkoba cuma ngasih happy palsu yang ngerusak otak.",
-            "foto": st.image("ilustrasi-wanita-hamil_169.jpg", use_container_width=True)
+            "foto": None
         },
         {
             "judul": "⏳ Pendewasaan Usia Perkawinan (PUP)", 
