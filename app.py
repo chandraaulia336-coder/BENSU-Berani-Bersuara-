@@ -331,7 +331,7 @@ elif menu == "Kritik & Saran": # <-- Sesuaikan nama menunya sama punya lu
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("📥 Kotak Kritik & Saran")
     
-    # --- FOTO DI-RESCUE, JANGAN SAMPAI HILANG LAGI WKWK ---
+    # --- FOTO DUTA GENRE ---
     img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
     with img_col2:
         if os.path.exists("genre_juara1.jpg"): 
@@ -361,3 +361,13 @@ elif menu == "Kritik & Saran": # <-- Sesuaikan nama menunya sama punya lu
             save_kritik_sheets(daftar_kritik)
             
             st.success("Tengkyu bre! Kritik & saran lu udah masuk ke meja admin buat bahan evaluasi. 🔥")
+
+    # ====================================================================
+    # --- TOMBOL CONTACT PERSON (CHAT LANGSUNG) ---
+    # ====================================================================
+    st.write("---")
+    st.subheader("📞 Layanan Pengaduan & Konseling Privat")
+    st.write("Mau konseling lebih mendalam, butuh bantuan cepat, atau pengen ngobrol langsung secara personal? Langsung klik tombol di bawah ini buat terhubung ke WhatsApp Admin, bre!")
+    
+    # Tombol interaktif langsung nge-link ke WA lu
+    st.link_button("Hubungi Admin via WhatsApp 💬", "https://wa.me/qr/RTCENRAXQVZFM1", use_container_width=True)
