@@ -10,7 +10,7 @@ st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 # ==========================================================
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB"
-API_URL_GALERI = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTCVPrrShIvIUuEcSH-RZAWo_Wi2AQZTUfe-ezizagdeuZqnV97qSCmx6GV2LR1VtPN-ZftSIQU0yGO_52g4gqwq2Nm-0A_RBcZ9CYUEF6zYo2ZZelit0oXLUdt8zkfOoNLMFjWo9r2EIe6MKZj1U8CFGZgnySznQPl98Kn19JQmFbpP9GiVzqaGfHNgEAGrqh9fPUNLdk4Vfl52AReOQg6sXhmw9TMeks8CZ43JR_t5YVrqzeyZ17VRW5E-hlmpBqWh8dze4DwLTnExe5lmMXRWodQlQ&lib=MUzcxSDqFhUG0ywdBbYeaNiSFgaMB1syBU"
+API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"
 # ==========================================================
 
 # --- FUNGSI DATABASE MATERI ---
