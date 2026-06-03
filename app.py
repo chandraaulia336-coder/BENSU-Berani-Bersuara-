@@ -128,8 +128,8 @@ if 'feedbacks' not in st.session_state: st.session_state['feedbacks'] = []
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Tempat aman buat belajar dan cerita."
 
 # === LOGO DI SIDEBAR ===
-if os.path.exists("Logo bumper (1).png"):
-    st.sidebar.image("Logo bumper (1).png", use_container_width=True)
+if os.path.exists("Logo bumper (1).jpg"):
+    st.image("Logo bumper (1).jpg", width=180)
     st.sidebar.write("")
 
 # === SIDEBAR NAVIGASI ===
