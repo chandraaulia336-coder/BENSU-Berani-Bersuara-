@@ -128,8 +128,8 @@ if 'feedbacks' not in st.session_state: st.session_state['feedbacks'] = []
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Tempat aman buat belajar dan cerita."
 
 # === LOGO DI SIDEBAR ===
-if os.path.exists("Logo bumper (1).jpg"):
-    st.sidebar.image("Logo bumper (1).jpg", use_container_width=True)
+if os.path.exists("Logo bumper (1).png"):
+    st.sidebar.image("Logo bumper (1).png", use_container_width=True)
     st.sidebar.write("")
 
 # === SIDEBAR NAVIGASI ===
@@ -145,8 +145,8 @@ if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 if menu == "Beranda & Galeri":
     col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
     with col_l2:
-        if os.path.exists("Logo bumper (1).jpg"):
-            st.image("Logo bumper (1).jpg", use_container_width=True)
+        if os.path.exists("Logo bumper (1).png"):
+            st.image("Logo bumper (1).png", use_container_width=True)
 
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.markdown('<p class="header-title">Ruang Kita 🚀</p>', unsafe_allow_html=True)
