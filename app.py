@@ -11,6 +11,7 @@ st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
 API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"
+API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"
 # ==========================================================
 
 # --- FUNGSI DATABASE MATERI (VERSI DETEKTIF EROR) ---
@@ -69,6 +70,25 @@ def save_galeri_sheets(data_list):
                 st.error(f"❌ Gagal nyimpen! Sheets nolak dengan kode: {res.status_code}")
         except Exception as e: 
             st.error(f"❌ Gagal ngirim data ke Sheets. Erornya: {e}")
+
+# --- FUNGSI DATABASE RUANG CERITA ---
+def fetch_cerita_sheets():
+    if API_URL_CERITA == "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec": 
+        return []
+    try:
+        res = requests.get(API_URL_CERITA)
+        if res.status_code == 200:
+            return res.json()
+        return []
+    except:
+        return []
+
+def save_cerita_sheets(data_list):
+    if API_URL_CERITA != "PASTE_URL_APPS_SCRIPT_CERITA_LU":
+        try: 
+            requests.post(API_URL_CERITA, json={"data": data_list})
+        except:
+            pass
 
 # Ambil data dari kedua database sekali di awal sesi
 if 'daftar_materi' not in st.session_state:
@@ -238,16 +258,56 @@ elif menu == "Substansi Materi":
 elif menu == "Ruang Cerita (Anonim)":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("💬 Ruang Cerita")
+    
     img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
     with img_col2:
-        if os.path.exists("genre_juara1.jpg"): st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
+        if os.path.exists("genre_juara1.jpg"): 
+            st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
     
+    # 1. Ambil semua data cerita lama dari Google Sheets
+    daftar_cerita = fetch_cerita_sheets()
+    
+    # Form input cerita baru
     with st.form("cerita_form", clear_on_submit=True):
-        user_input = st.text_area("Ketik cerita lu di sini...")
+        user_input = st.text_area("Ketik cerita/curhatan lu di sini (tenang, anonim kok)...")
         if st.form_submit_button("Kirim Cerita 💌") and user_input:
-            st.session_state['chat_history'].append({"role": "Anonim", "text": user_input, "time": datetime.now().strftime("%H:%M")})
-            st.success("Cerita terkirim!")
-
+            waktu_sekarang = datetime.now().strftime("%d/%m/%Y %H:%M")
+            
+            # Bikin struktur data baru (Respon Admin dikosongin dulu)
+            cerita_baru = {
+                "Waktu": waktu_sekarang, 
+                "Cerita": user_input, 
+                "Respon Admin": ""
+            }
+            
+            # Gabungin data baru ke list lama, lalu push ke Sheets
+            daftar_cerita.append(cerita_baru)
+            save_cerita_sheets(daftar_cerita)
+            
+            st.success("Cerita lu udah meluncur ke database admin, bre! Tunggu direspon ya.")
+            st.rerun() # Paksa refresh biar langsung muncul di bawah
+            
+    st.write("---")
+    st.subheader("📚 Jejak Cerita & Respon Admin")
+    
+    # 2. Tampilkan semua cerita beserta respon dari admin
+    if not daftar_cerita:
+        st.info("Belum ada cerita yang masuk nih. Jadi yang pertama curhat yuk!")
+    else:
+        # Tampilkan dari yang paling baru (dibalik urutannya)
+        for item in reversed(daftar_cerita):
+            with st.container():
+                st.markdown(f"**👤 Anonim** *({item.get('Waktu', '-')})*")
+                st.info(item.get("Cerita", ""))
+                
+                # Ngecek apakah kolom 'Respon Admin' di Google Sheets udah diisi atau belum
+                respon = item.get("Respon Admin", "").strip()
+                if respon:
+                    st.markdown("**👑 Respon Admin:**")
+                    st.success(respon)
+                else:
+                    st.markdown("*🕒 Belum ada respon dari admin. Sabar ya, bre!*")
+                st.write("")
 elif menu == "Kritik & Saran":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("💡 Kotak Saran")
