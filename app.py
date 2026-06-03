@@ -7,34 +7,43 @@ import requests
 # Setup Halaman
 st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 
-# ==========================================
-# PASTE URL APLIKASI WEB APPS SCRIPT LU DI SINI
-API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB"
-# ==========================================
+# ==========================================================
+# PASTE MASING-MASING URL WEB APP LU DI SINI
+API_URL_MATERI = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB"
+API_URL_GALERI = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTCVPrrShIvIUuEcSH-RZAWo_Wi2AQZTUfe-ezizagdeuZqnV97qSCmx6GV2LR1VtPN-ZftSIQU0yGO_52g4gqwq2Nm-0A_RBcZ9CYUEF6zYo2ZZelit0oXLUdt8zkfOoNLMFjWo9r2EIe6MKZj1U8CFGZgnySznQPl98Kn19JQmFbpP9GiVzqaGfHNgEAGrqh9fPUNLdk4Vfl52AReOQg6sXhmw9TMeks8CZ43JR_t5YVrqzeyZ17VRW5E-hlmpBqWh8dze4DwLTnExe5lmMXRWodQlQ&lib=MUzcxSDqFhUG0ywdBbYeaNiSFgaMB1syBU"
+# ==========================================================
 
-# Fungsi Ambil Data dari Sheets via Web App
+# --- FUNGSI DATABASE MATERI ---
 def fetch_materi_sheets():
-    if API_URL == "PASTE_URL_WEB_APP_LU_DI_SINI":
-        return []
+    if API_URL_MATERI == "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB": return []
     try:
-        res = requests.get(API_URL)
+        res = requests.get(API_URL_MATERI)
         return res.json()
-    except:
-        return []
+    except: return []
 
-# Fungsi Simpan Semua Data ke Sheets via Web App
 def save_materi_sheets(data_list):
-    if API_URL != "PASTE_URL_WEB_APP_LU_DI_SINI":
-        try:
-            requests.post(API_URL, json={"data": data_list})
-            return True
-        except:
-            return False
-    return False
+    if API_URL_MATERI != "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRk7cyYISCBvywkWI8m7jb1BPPRJ_vftkbf1Cv8xird5C68dRP_PJmXheiW8Z5DiQDOAYmcuVPIhaGMyqi3_ERSR39a4gQEpTKzs_DR7ZF0w0FmQJQziKSsQe7l3hbY1mkOmxUZQtm6sVb7OOq_XZWsQCr9x1hzgQXWZ-R-0rg14SC9PzGLutaivkZeYBLp0CFgOwDLJw8JVF8rx4ujhHmMEONdroXVD26gcWGjMsTjp0Yb0yavJrgAk2VEWXTqSRWNo9tJ2Cs_0GmTMsJx2ZSzMjFBqA&lib=MfSX_BDqrwf30UxEjy7bjgCSFgaMB1syB":
+        try: requests.post(API_URL_MATERI, json={"data": data_list})
+        except: pass
 
-# Jalankan penarikan data sekali di awal sesi
+# --- FUNGSI DATABASE GALERI ---
+def fetch_galeri_sheets():
+    if API_URL_GALERI == "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTCVPrrShIvIUuEcSH-RZAWo_Wi2AQZTUfe-ezizagdeuZqnV97qSCmx6GV2LR1VtPN-ZftSIQU0yGO_52g4gqwq2Nm-0A_RBcZ9CYUEF6zYo2ZZelit0oXLUdt8zkfOoNLMFjWo9r2EIe6MKZj1U8CFGZgnySznQPl98Kn19JQmFbpP9GiVzqaGfHNgEAGrqh9fPUNLdk4Vfl52AReOQg6sXhmw9TMeks8CZ43JR_t5YVrqzeyZ17VRW5E-hlmpBqWh8dze4DwLTnExe5lmMXRWodQlQ&lib=MUzcxSDqFhUG0ywdBbYeaNiSFgaMB1syB": return []
+    try:
+        res = requests.get(API_URL_GALERI)
+        return res.json()
+    except: return []
+
+def save_galeri_sheets(data_list):
+    if API_URL_GALERI != "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTCVPrrShIvIUuEcSH-RZAWo_Wi2AQZTUfe-ezizagdeuZqnV97qSCmx6GV2LR1VtPN-ZftSIQU0yGO_52g4gqwq2Nm-0A_RBcZ9CYUEF6zYo2ZZelit0oXLUdt8zkfOoNLMFjWo9r2EIe6MKZj1U8CFGZgnySznQPl98Kn19JQmFbpP9GiVzqaGfHNgEAGrqh9fPUNLdk4Vfl52AReOQg6sXhmw9TMeks8CZ43JR_t5YVrqzeyZ17VRW5E-hlmpBqWh8dze4DwLTnExe5lmMXRWodQlQ&lib=MUzcxSDqFhUG0ywdBbYeaNiSFgaMB1syB":
+        try: requests.post(API_URL_GALERI, json={"data": data_list})
+        except: pass
+
+# Ambil data dari kedua database sekali di awal sesi
 if 'daftar_materi' not in st.session_state:
     st.session_state['daftar_materi'] = fetch_materi_sheets()
+if 'daftar_galeri' not in st.session_state:
+    st.session_state['daftar_galeri'] = fetch_galeri_sheets()
 
 # Fungsi ngebaca foto lokal jadiin Wallpaper Background
 def get_base64_bg(image_path):
@@ -62,7 +71,6 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-if 'gallery' not in st.session_state: st.session_state['gallery'] = []
 if 'chat_history' not in st.session_state: st.session_state['chat_history'] = []
 if 'feedbacks' not in st.session_state: st.session_state['feedbacks'] = []
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Tempat aman buat belajar dan cerita."
@@ -76,17 +84,52 @@ admin_pass = st.sidebar.text_input("Punya Kode Sesi?", type="password")
 is_admin = admin_pass == "admin123" 
 if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 
-# === MENU 1: BERANDA ===
+# === MENU 1: BERANDA & GALERI (DATABASE PERMANEN) ===
 if menu == "Beranda & Galeri":
     st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.markdown('<p class="header-title">Ruang Kita 🚀</p>', unsafe_allow_html=True)
     st.markdown(f'<p class="sub-header">{st.session_state["tagline"]}</p>', unsafe_allow_html=True)
+    
+    if is_admin:
+        with st.expander("🛠️ Admin Panel: Edit Tagline Web"):
+            tagline_baru = st.text_input("Ubah kalimat sub-header:", value=st.session_state['tagline'])
+            if st.button("Update Tagline"):
+                st.session_state['tagline'] = tagline_baru
+                st.success("Tagline diperbarui!")
+                st.rerun()
+
     st.divider()
     st.subheader("📸 Galeri Aksi")
-    if st.session_state['gallery']:
+    
+    # Menampilkan foto permanen dari Google Sheets Galeri
+    if st.session_state['daftar_galeri']:
         cols = st.columns(3)
-        for i, img in enumerate(st.session_state['gallery']): cols[i % 3].image(img, use_container_width=True)
-    else: st.info("Belum ada foto di galeri.")
+        for i, url_img in enumerate(st.session_state['daftar_galeri']):
+            cols[i % 3].image(url_img, use_container_width=True)
+    else:
+        st.info("Belum ada foto yang dipajang di galeri.")
+
+    if is_admin:
+        st.write("")
+        with st.expander("🛠️ Admin Panel: Kelola Foto Galeri", expanded=False):
+            st.write("🖼️ **Tambah Foto Baru (Gunakan Direct Link Postimages):**")
+            link_galeri_baru = st.text_input("Masukkan URL Gambar", placeholder="https://i.postimg.cc/...jpg")
+            if st.button("Pajang di Galeri Permanen 🚀"):
+                if link_galeri_baru:
+                    st.session_state['daftar_galeri'].append(link_galeri_baru)
+                    save_galeri_sheets(st.session_state['daftar_galeri'])
+                    st.success("Foto berhasil nangkring di galeri permanen!")
+                    st.rerun()
+            
+            if st.session_state['daftar_galeri']:
+                st.write("---")
+                st.write("🗑️ **Hapus Foto Lama:**")
+                foto_hapus = st.selectbox("Pilih link foto yang mau diturunkan:", st.session_state['daftar_galeri'])
+                if st.button("Hapus Foto Ini Selamanya ❌"):
+                    st.session_state['daftar_galeri'].remove(foto_hapus)
+                    save_galeri_sheets(st.session_state['daftar_galeri'])
+                    st.warning("Foto berhasil dihapus dari database!")
+                    st.rerun()
 
 # === MENU 2: SUBSTANSI MATERI ===
 elif menu == "Substansi Materi":
@@ -97,18 +140,14 @@ elif menu == "Substansi Materi":
         for m in st.session_state['daftar_materi']:
             with st.expander(m["Judul"]):
                 st.write(m["Isi"])
-                
-                # Cek dan pecah link foto kalau ada banyak (dipisahkan tanda koma)
                 if m.get("Foto") and m["Foto"] != "None":
                     list_foto = [url.strip() for url in m["Foto"].split(",") if url.strip() and url.strip() != "None"]
                     if list_foto:
                         st.write("---")
-                        # Nampilin foto berjajar memanfaatkan kolom streamlit
                         cols_foto = st.columns(len(list_foto))
                         for idx_f, url_f in enumerate(list_foto):
                             cols_foto[idx_f].image(url_f, use_container_width=True)
-    else:
-        st.info("Database kosong atau kamu belum setting URL Apps Script.")
+    else: st.info("Database materi kosong atau belum dikonfigurasi.")
             
     if is_admin:
         st.divider()
@@ -118,20 +157,18 @@ elif menu == "Substansi Materi":
             if aksi_materi == "Tambah Materi Baru":
                 judul_baru = st.text_input("Judul Materi Baru")
                 isi_baru = st.text_area("Isi Materi Baru")
-                
-                st.write("🖼️ **Link Foto Pendukung (Ambil dari Direct Link Postimages):**")
+                st.write("🖼️ **Link Foto Pendukung:**")
                 link_f1 = st.text_input("Link Foto 1", placeholder="https://i.postimg.cc/...jpg")
                 link_f2 = st.text_input("Link Foto 2 (Opsional)", placeholder="https://i.postimg.cc/...jpg")
                 link_f3 = st.text_input("Link Foto 3 (Opsional)", placeholder="https://i.postimg.cc/...jpg")
                 
                 if st.button("Posting Permanen"):
                     if judul_baru and isi_baru:
-                        # Gabungin link foto pake tanda koma biar kesimpen jadi 1 teks di Sheets
                         foto_gabung = ",".join([link_f1 if link_f1 else "None", link_f2 if link_f2 else "None", link_f3 if link_f3 else "None"])
                         new_item = {"Judul": judul_baru, "Isi": isi_baru, "Foto": foto_gabung}
                         st.session_state['daftar_materi'].append(new_item)
                         save_materi_sheets(st.session_state['daftar_materi'])
-                        st.success("Sukses disimpan permanen ke Google Sheets!")
+                        st.success("Sukses disimpan permanen!")
                         st.rerun()
             
             elif aksi_materi == "Edit / Hapus Materi Lawas":
@@ -144,7 +181,6 @@ elif menu == "Substansi Materi":
                     judul_edit = st.text_input("Edit Judul", value=data_lama["Judul"])
                     isi_edit = st.text_area("Edit Isi", value=data_lama["Isi"])
                     
-                    # Pecah dulu data lama pas mau diedit biar masuk ke masing-masing kolom input
                     foto_lama = data_lama["Foto"].split(",") if "," in data_lama["Foto"] else [data_lama["Foto"], "None", "None"]
                     while len(foto_lama) < 3: foto_lama.append("None")
                     
