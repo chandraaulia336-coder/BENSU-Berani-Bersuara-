@@ -11,7 +11,6 @@ st.set_page_config(page_title="Ruang Kita", page_icon="🌊", layout="wide")
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
 API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"
-API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"
 # ==========================================================
 
 # --- FUNGSI DATABASE MATERI (VERSI DETEKTIF EROR) ---
@@ -71,27 +70,26 @@ def save_galeri_sheets(data_list):
         except Exception as e: 
             st.error(f"❌ Gagal ngirim data ke Sheets. Erornya: {e}")
 
-# --- FUNGSI DATABASE RUANG CERITA (VERSI DETEKTIF) ---
+API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"
+
+# --- FUNGSI DATABASE RUANG CERITA ---
 def fetch_cerita_sheets():
-    if API_URL_CERITA == "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec": 
-        st.warning("⚠️ URL Cerita belum lu ganti di app.py, bro!")
+    if API_URL_CERITA == "PASTE_URL_APPS_SCRIPT_CERITA_LU": 
         return []
     try:
         res = requests.get(API_URL_CERITA)
-        if res.status_code != 200:
-            st.error(f"❌ Google Sheets nolak nyerahin data Cerita! Status Code: {res.status_code}")
-            return []
-        
-        # Kita cek apakah yang dikembaliin beneran JSON atau teks eror html
-        try:
+        if res.status_code == 200:
             return res.json()
-        except Exception as json_err:
-            st.error(f"❌ Google Sheets ngirim data rusak (Bukan JSON). Respon mentahnya: {res.text[:200]}")
-            return []
-            
-    except Exception as e: 
-        st.error(f"❌ Gagal total narik data Cerita. Erornya: {e}")
         return []
+    except:
+        return []
+
+def save_cerita_sheets(data_list):
+    if API_URL_CERITA != "PASTE_URL_APPS_SCRIPT_CERITA_LU":
+        try: 
+            requests.post(API_URL_CERITA, json={"data": data_list})
+        except:
+            pass
 
 # Ambil data dari kedua database sekali di awal sesi
 if 'daftar_materi' not in st.session_state:
