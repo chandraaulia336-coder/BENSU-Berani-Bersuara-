@@ -240,7 +240,7 @@ elif menu == "Ruang Cerita (Anonim)":
     st.title("💬 Ruang Cerita")
     img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
     with img_col2:
-        if os.path.exists("genre_juara.jpg"): st.image("genre_juara.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
+        if os.path.exists("genre_juara1.jpg"): st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
     
     with st.form("cerita_form", clear_on_submit=True):
         user_input = st.text_area("Ketik cerita lu di sini...")
