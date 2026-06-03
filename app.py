@@ -104,7 +104,7 @@ def fetch_kritik_sheets():
     except: return []
 
 def save_kritik_sheets(data_list):
-    if API_URL_KRITIK != "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec":
+    if API_URL_KRITIK != "PASTE_URL_APPS_SCRIPT_KRITIK_LU":
         try: 
             requests.post(API_URL_KRITIK, json={"data": data_list})
         except: pass
