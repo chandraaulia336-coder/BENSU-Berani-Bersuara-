@@ -100,10 +100,16 @@ if 'daftar_materi' not in st.session_state:
 if 'daftar_galeri' not in st.session_state:
     st.session_state['daftar_galeri'] = fetch_galeri_sheets()
 
-# --- STYLE LAYOUT BARU (WARNA SEBISA MUNGKIN MENGIKUTI BASE THEME STREAMLIT) ---
+# --- STYLE LAYOUT BARU (BACKGROUND GRADIENT ADAPTIF BALIK LAGI) ---
 st.markdown("""
     <style>
-    /* Tag Kapsul Bulat di Atas Judul (Pakai warna semi transparan agar masuk di tema gelap & terang) */
+    /* Mengembalikan Background Utama Gradasi Lembut Menyesuaikan Layout Referensi Atas */
+    .stApp {
+        background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 50%, #f0fdf4 100%);
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Tag Kapsul Bulat di Atas Judul */
     .kapsul-tag {
         display: inline-flex;
         align-items: center;
@@ -124,7 +130,7 @@ st.markdown("""
         display: inline-block;
     }
     
-    /* Desain Teks Judul Utama (Mengikuti warna default sistem font) */
+    /* Desain Teks Judul Utama */
     .hero-title {
         font-size: 42px;
         font-weight: 800;
@@ -138,7 +144,7 @@ st.markdown("""
         margin-bottom: 25px;
     }
     
-    /* Kartu Statistik Gradasi Biru Indah (Tetap kontras di mode gelap maupun terang) */
+    /* Kartu Statistik Gradasi Biru Indah */
     .stats-card {
         background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
         color: white !important;
