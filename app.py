@@ -100,29 +100,16 @@ if 'daftar_materi' not in st.session_state:
 if 'daftar_galeri' not in st.session_state:
     st.session_state['daftar_galeri'] = fetch_galeri_sheets()
 
-# --- STYLE UTAMA MENIRU SENANDUNG ASA (LIGHT THEME & MODERN APP VIBES) ---
+# --- STYLE LAYOUT BARU (WARNA SEBISA MUNGKIN MENGIKUTI BASE THEME STREAMLIT) ---
 st.markdown("""
     <style>
-    /* Mengubah background utama menjadi gradasi lembut (Light Theme) */
-    .stApp {
-        background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 50%, #f0fdf4 100%);
-        color: #1e293b;
-        font-family: 'Inter', sans-serif;
-    }
-    
-    /* Tombol Navigasi Sidebar Bulat */
-    [data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 1px solid #e2e8f0;
-    }
-    
-    /* Tag Kapsul Bulat di Atas Judul */
+    /* Tag Kapsul Bulat di Atas Judul (Pakai warna semi transparan agar masuk di tema gelap & terang) */
     .kapsul-tag {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background-color: #e0f2fe;
-        color: #0369a1;
+        background-color: rgba(14, 165, 233, 0.15);
+        color: #0284c7;
         font-size: 13px;
         font-weight: 600;
         padding: 6px 14px;
@@ -137,30 +124,32 @@ st.markdown("""
         display: inline-block;
     }
     
-    /* Desain Judul Utama (Hero Title) */
+    /* Desain Teks Judul Utama (Mengikuti warna default sistem font) */
     .hero-title {
         font-size: 42px;
         font-weight: 800;
-        color: #0f172a;
         line-height: 1.2;
         margin-bottom: 10px;
     }
     .hero-subtitle {
         font-size: 16px;
-        color: #475569;
+        opacity: 0.85;
         line-height: 1.6;
         margin-bottom: 25px;
     }
     
-    /* Kartu Statistik Biru Kontras (Stats Cards) */
+    /* Kartu Statistik Gradasi Biru Indah (Tetap kontras di mode gelap maupun terang) */
     .stats-card {
         background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-        color: white;
+        color: white !important;
         padding: 24px;
         border-radius: 20px;
         box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
         margin-bottom: 15px;
         text-align: left;
+    }
+    .stats-card * {
+        color: white !important;
     }
     .stats-number {
         font-size: 38px;
@@ -173,18 +162,10 @@ st.markdown("""
         opacity: 0.9;
     }
     
-    /* Menghilangkan border bawaan streamlit pada widget tertentu agar senada */
+    /* Atur expander bawaan streamlit agar bersudut tumpul modis */
     div[data-testid="stExpander"] {
-        background-color: white !important;
-        border: 1px solid #e2e8f0 !important;
         border-radius: 16px !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
-    }
-    
-    /* Override warna judul Streamlit standar agar konsisten gelap */
-    h1, h2, h3, h4 {
-        color: #0f172a !important;
-        font-weight: 700 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -218,7 +199,7 @@ if menu == "Beranda & Galeri":
 
     st.write("")
     
-    # HERO SECTION GAYA MERAH PUTIH / CILACAP SELATAN
+    # HERO SECTION (Struktur layout rapi & adaptif hitam/putih)
     st.markdown("""
         <div class="kapsul-tag">
             <span class="kapsul-dot"></span> Kecamatan Cilacap Selatan
@@ -243,8 +224,8 @@ if menu == "Beranda & Galeri":
 
     st.divider()
     
-    # STATS SECTION (Merah Putih Dalam Angka)
-    st.markdown('<p style="font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 20px;">Merah Putih dalam Angka</p>', unsafe_allow_html=True)
+    # STATS SECTION (Card Biru Menyesuaikan Layout Referensi)
+    st.markdown('<p style="font-size: 24px; font-weight: 700; margin-bottom: 20px;">Merah Putih dalam Angka</p>', unsafe_allow_html=True)
     
     col_stat1, col_stat2, col_stat3 = st.columns([1, 1, 1])
     with col_stat1:
@@ -304,7 +285,7 @@ if menu == "Beranda & Galeri":
 # === MENU 2: SUBSTANSI MATERI ===
 elif menu == "Substansi Materi":
     st.title("📚 Substansi Materi")
-    st.markdown("<p style='color: #475569;'>Pelajari berbagai infografis dan substansi edukasi di bawah ini.</p>", unsafe_allow_html=True)
+    st.write("Pelajari berbagai infografis dan substansi edukasi di bawah ini.")
     st.write("")
     
     if st.session_state['daftar_materi']:
@@ -377,7 +358,7 @@ elif menu == "Substansi Materi":
 # === MENU 3: RUANG CERITA ===
 elif menu == "Ruang Cerita (Anonim)":
     st.title("💬 Ruang Cerita")
-    st.markdown("<p style='color: #475569;'>Tempat aman untuk mencurahkan isi hati secara anonim.</p>", unsafe_allow_html=True)
+    st.write("Tempat aman untuk mencurahkan isi hati secara anonim.")
     
     img_col1, img_col2, img_col3 = st.columns([1, 1.2, 1])
     with img_col2:
@@ -423,7 +404,7 @@ elif menu == "Kritik & Saran":
         if os.path.exists("genre_juara1.jpg"): 
             st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
             
-    st.markdown("<p style='color: #475569;'>Punya masukan, kritik tajam, atau saran buat perkembangan kita? Tumpahin di sini, bre. Identitas lu aman kok!</p>", unsafe_allow_html=True)
+    st.write("Punya masukan, kritik tajam, atau saran buat perkembangan kita? Tumpahin di sini, bre. Identitas lu aman kok!")
     
     daftar_kritik = fetch_kritik_sheets()
     
