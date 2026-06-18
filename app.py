@@ -4,6 +4,9 @@ import base64
 import os
 import requests
 
+# Set Page Config ke Wide agar layout card dan kolom terlihat rapi
+st.set_page_config(page_title="Merah Putih Web", layout="wide")
+
 # ==========================================================
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
@@ -97,39 +100,102 @@ if 'daftar_materi' not in st.session_state:
 if 'daftar_galeri' not in st.session_state:
     st.session_state['daftar_galeri'] = fetch_galeri_sheets()
 
-# Fungsi ngebaca foto lokal jadiin Wallpaper Background
-def get_base64_bg(image_path):
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as img_file:
-            encoded = base64.b64encode(img_file.read()).decode()
-        return f"data:image/webp;base64,{encoded}"
-    return "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000"
-
-bg_image = get_base64_bg("25117787.webp")
-
-st.markdown(f"""
+# --- STYLE UTAMA MENIRU SENANDUNG ASA (LIGHT THEME & MODERN APP VIBES) ---
+st.markdown("""
     <style>
-    .stApp {{
-        background: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.95)), url("{bg_image}"); 
-        background-size: cover; background-position: center; background-attachment: fixed; color: #ffffff;
-    }}
-    .header-title {{ font-size: 45px; font-weight: bold; color: #BB86FC; margin-bottom: -10px; }}
-    .sub-header {{ font-size: 20px; color: #B3B3B3; }}
-    .wave-container {{
-        width: 100%; height: 100px;
-        background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%23BB86FC" fill-opacity="0.3" d="M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,144C672,128,768,128,864,138.7C960,149,1056,171,1152,165.3C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
-        background-size: cover; background-repeat: no-repeat; margin-top: -20px; margin-bottom: 20px;
-    }}
+    /* Mengubah background utama menjadi gradasi lembut (Light Theme) */
+    .stApp {
+        background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 50%, #f0fdf4 100%);
+        color: #1e293b;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Tombol Navigasi Sidebar Bulat */
+    [data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+        border-right: 1px solid #e2e8f0;
+    }
+    
+    /* Tag Kapsul Bulat di Atas Judul */
+    .kapsul-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background-color: #e0f2fe;
+        color: #0369a1;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 50px;
+        margin-bottom: 15px;
+    }
+    .kapsul-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #0ea5e9;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    
+    /* Desain Judul Utama (Hero Title) */
+    .hero-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 10px;
+    }
+    .hero-subtitle {
+        font-size: 16px;
+        color: #475569;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+    
+    /* Kartu Statistik Biru Kontras (Stats Cards) */
+    .stats-card {
+        background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+        color: white;
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+        margin-bottom: 15px;
+        text-align: left;
+    }
+    .stats-number {
+        font-size: 38px;
+        font-weight: 900;
+        margin-bottom: 2px;
+    }
+    .stats-label {
+        font-size: 14px;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+    
+    /* Menghilangkan border bawaan streamlit pada widget tertentu agar senada */
+    div[data-testid="stExpander"] {
+        background-color: white !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+    }
+    
+    /* Override warna judul Streamlit standar agar konsisten gelap */
+    h1, h2, h3, h4 {
+        color: #0f172a !important;
+        font-weight: 700 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 if 'chat_history' not in st.session_state: st.session_state['chat_history'] = []
 if 'feedbacks' not in st.session_state: st.session_state['feedbacks'] = []
-if 'tagline' not in st.session_state: st.session_state['tagline'] = "Tempat aman buat belajar dan cerita."
+if 'tagline' not in st.session_state: st.session_state['tagline'] = "Sebuah Gerakan dari Kecamatan Cilacap Selatan untuk #MelangitkanHarapan, #MembumikanKebermanfaatan."
 
-# === LOGO DI SIDEBAR (POJOK KIRI ATAS, UKURAN PAS) ===
+# === LOGO DI SIDEBAR ===
 if os.path.exists("Logo bumper (1).png"):
-    st.sidebar.image("Logo bumper (1).png", width=200)
+    st.sidebar.image("Logo bumper (1).png", width=180)
     st.sidebar.write("")
 
 # === SIDEBAR NAVIGASI ===
@@ -144,16 +210,29 @@ if is_admin: st.sidebar.success("🛠️ Akses Terbuka")
 # === MENU 1: BERANDA & GALERI ===
 if menu == "Beranda & Galeri":
     
-    # LOGO HALAMAN UTAMA (UJUNG TENGAH ATAS)
+    # LOGO HALAMAN UTAMA (TENGAH ATAS)
     if os.path.exists("Logo bumper (1).png"):
-        col1, col2, col3 = st.columns([1, 1.5, 1])
+        col1, col2, col3 = st.columns([1, 1.2, 1])
         with col2:
             st.image("Logo bumper (1).png", use_container_width=True)
 
-    st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="header-title">Ruang Kita 🚀</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="sub-header">{st.session_state["tagline"]}</p>', unsafe_allow_html=True)
+    st.write("")
     
+    # HERO SECTION GAYA MERAH PUTIH / CILACAP SELATAN
+    st.markdown("""
+        <div class="kapsul-tag">
+            <span class="kapsul-dot"></span> Kecamatan Cilacap Selatan
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<p class="hero-title">Merah Putih: <br><span style="color: #0ea5e9;">Seruan Remaja</span> untuk Masa Depan Terencana.</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="hero-subtitle">{st.session_state["tagline"]}</p>', unsafe_allow_html=True)
+    
+    # Tombol Aksi Utama
+    col_btn1, col_btn2 = st.columns([1.5, 4])
+    with col_btn1:
+        st.link_button("Meningkatkan Harapan 🚀", "https://wa.me/qr/RTCENRAXQVZFM1", use_container_width=True)
+        
     if is_admin:
         with st.expander("🛠️ Admin Panel: Edit Tagline Web"):
             tagline_baru = st.text_input("Ubah kalimat sub-header:", value=st.session_state['tagline'])
@@ -162,6 +241,34 @@ if menu == "Beranda & Galeri":
                 st.success("Tagline diperbarui!")
                 st.rerun()
 
+    st.divider()
+    
+    # STATS SECTION (Merah Putih Dalam Angka)
+    st.markdown('<p style="font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 20px;">Merah Putih dalam Angka</p>', unsafe_allow_html=True)
+    
+    col_stat1, col_stat2, col_stat3 = st.columns([1, 1, 1])
+    with col_stat1:
+        st.markdown("""
+            <div class="stats-card">
+                <div class="stats-number">3+</div>
+                <div class="stats-label">Tahun Dedikasi Konsisten</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_stat2:
+        st.markdown("""
+            <div class="stats-card" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);">
+                <div class="stats-number">17.000+</div>
+                <div class="stats-label">Terdampak Tatap Muka</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_stat3:
+        st.markdown("""
+            <div class="stats-card" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                <div class="stats-number">100%</div>
+                <div class="stats-label">Aksi Sosial Berkelanjutan</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
     st.divider()
     st.subheader("📸 Galeri Aksi")
     
@@ -196,8 +303,9 @@ if menu == "Beranda & Galeri":
 
 # === MENU 2: SUBSTANSI MATERI ===
 elif menu == "Substansi Materi":
-    st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("📚 Substansi Materi")
+    st.markdown("<p style='color: #475569;'>Pelajari berbagai infografis dan substansi edukasi di bawah ini.</p>", unsafe_allow_html=True)
+    st.write("")
     
     if st.session_state['daftar_materi']:
         for m in st.session_state['daftar_materi']:
@@ -268,10 +376,10 @@ elif menu == "Substansi Materi":
 
 # === MENU 3: RUANG CERITA ===
 elif menu == "Ruang Cerita (Anonim)":
-    st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("💬 Ruang Cerita")
+    st.markdown("<p style='color: #475569;'>Tempat aman untuk mencurahkan isi hati secara anonim.</p>", unsafe_allow_html=True)
     
-    img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
+    img_col1, img_col2, img_col3 = st.columns([1, 1.2, 1])
     with img_col2:
         if os.path.exists("genre_juara1.jpg"): 
             st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
@@ -308,15 +416,14 @@ elif menu == "Ruang Cerita (Anonim)":
 
 # === MENU 4: KRITIK & SARAN ===
 elif menu == "Kritik & Saran": 
-    st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
     st.title("📥 Kotak Kritik & Saran")
     
-    img_col1, img_col2, img_col3 = st.columns([1, 1.5, 1])
+    img_col1, img_col2, img_col3 = st.columns([1, 1.2, 1])
     with img_col2:
         if os.path.exists("genre_juara1.jpg"): 
             st.image("genre_juara1.jpg", caption="Duta GenRe Kecamatan Cilacap Selatan 2026", use_container_width=True)
             
-    st.write("Punya masukan, kritik tajam, atau saran buat perkembangan kita? Tumpahin di sini, bre. Identitas lu aman kok!")
+    st.markdown("<p style='color: #475569;'>Punya masukan, kritik tajam, atau saran buat perkembangan kita? Tumpahin di sini, bre. Identitas lu aman kok!</p>", unsafe_allow_html=True)
     
     daftar_kritik = fetch_kritik_sheets()
     
