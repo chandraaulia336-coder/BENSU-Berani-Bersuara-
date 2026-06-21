@@ -15,7 +15,7 @@ API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKK
 API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
 # ==========================================================
 
-# --- FUNGSI DATABASE (Sama seperti sebelumnya) ---
+# --- FUNGSI DATABASE ---
 @st.cache_data(ttl=60)
 def fetch_data(url, name):
     if not url.startswith("https://script.google.com"): return []
@@ -34,84 +34,121 @@ if 'daftar_materi' not in st.session_state: st.session_state['daftar_materi'] = 
 if 'daftar_galeri' not in st.session_state: st.session_state['daftar_galeri'] = fetch_data(API_URL_GALERI, "Galeri")
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Sebuah Gerakan dari Remaja untuk Melangitkan Harapan dan Membumikan Kebermanfaatan."
 
-# --- CUSTOM CSS (Tema Terang ala Video) ---
+# --- CUSTOM CSS (Tema Terang Diperbaiki) ---
 st.markdown("""
     <style>
     /* Mengubah background jadi putih cerah */
     .stApp {
-        background-color: #F8FAFC; 
-        color: #1E293B;
+        background-color: #F8FAFC !important; 
+        color: #1E293B !important;
     }
     
     /* Styling Typography */
     .hero-title { 
-        font-size: 4rem; 
+        font-size: 3.5rem; 
         font-weight: 800; 
-        color: #1E3A8A; /* Biru gelap ala Senandung Asa */
+        color: #1E3A8A; 
         line-height: 1.2;
         margin-bottom: 20px;
     }
     .hero-subtitle { 
-        font-size: 1.5rem; 
+        font-size: 1.3rem; 
         color: #0284C7; 
         font-weight: 600;
         margin-bottom: 20px;
     }
     .section-title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         font-weight: bold;
         text-align: center;
         color: #0F172A;
-        margin-top: 50px;
-        margin-bottom: 30px;
+        margin-top: 40px;
+        margin-bottom: 25px;
     }
     
-    /* Styling Kartu/Container */
+    /* PERBAIKAN: Memaksa warna angka statistik terlihat kontras */
+    [data-testid="stMetricValue"] {
+        color: #1E3A8A !important;
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #475569 !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Styling Kartu untuk bungkus Metric */
     div.stMetric {
-        background-color: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        text-align: center;
+        background-color: #FFFFFF !important;
+        padding: 25px 15px !important;
+        border-radius: 16px !important;
+        border: 1px solid #E2E8F0 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+        text-align: center !important;
+    }
+
+    /* PERBAIKAN: Modifikasi gaya menu pilihan agar kontras dan mudah dilihat */
+    div[data-testid="stRadio"] > label {
+        display: none; /* Sembunyikan label bawaan */
+    }
+    div[data-testid="stRadio"] > div {
+        background-color: #E2E8F0;
+        padding: 6px;
+        border-radius: 12px;
+        gap: 10px;
+    }
+    div[data-testid="stRadio"] label[data-baseweb="radio"] {
+        background-color: transparent;
+        padding: 10px 20px !important;
+        border-radius: 8px;
+        color: #334155 !important;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    /* Ketika menu dipilih */
+    div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {
+        background-color: #1E3A8A !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
-    /* Sembunyikan elemen bawaan Streamlit yang mengganggu */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
 
-# --- TOP NAVIGATION BAR (Mengganti Sidebar) ---
-col_logo, col_nav = st.columns([1, 4])
+# --- TOP NAVIGATION BAR ---
+col_logo, col_nav = st.columns([1, 3.5], vertical_alignment="center")
 with col_logo:
     if os.path.exists("Logo bumper (1).png"):
-        st.image("Logo bumper (1).png", width=150)
+        st.image("Logo bumper (1).png", width=140)
     else:
-        st.markdown("**MERAH PUTIH**")
+        st.markdown("<h3 style='color:#1E3A8A; margin:0;'>MERAH PUTIH</h3>", unsafe_allow_html=True)
 
 with col_nav:
-    # Menggunakan radio horizontal sebagai top navbar
+    # Navigasi dengan style tombol tab baru yang kontras
     menu = st.radio(
-        "Navigasi", 
+        "Menu Navigasi", 
         ["Home", "Ruang Program", "Ruang Cerita", "Kritik & Saran", "Admin Panel"], 
-        horizontal=True, 
-        label_visibility="collapsed"
+        horizontal=True
     )
 
-st.markdown("---")
+st.markdown("<hr style='margin-top:5px; margin-bottom:25px; border-color:#E2E8F0;'>", unsafe_allow_html=True)
 
 # ==========================================
 # MENU 1: HOME (Beranda & Galeri)
 # ==========================================
 if menu == "Home":
-    # HERO SECTION (Teks Kiri, Gambar Kanan)
+    # HERO SECTION
     h_col1, h_col2 = st.columns([1.2, 1], gap="large")
     
     with h_col1:
         st.markdown('<div class="hero-title">Merah Putih: Menuju Era Remaja Terencana.</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="hero-subtitle">{st.session_state["tagline"]}</div>', unsafe_allow_html=True)
         st.write('"Jadilah pemuda yang aktif, harmonis, unggul, terencana, inspiratif, & hebat. Karena masa depan dimulai dari langkah kecil hari ini."')
+        st.write("")
         st.button("Mengenal Lebih Dekat", type="primary")
 
     with h_col2:
@@ -126,7 +163,7 @@ if menu == "Home":
     m1.metric(label="Tahun Dedikasi", value="1+")
     m2.metric(label="Remaja Terdampak", value="500+")
     m3.metric(label="Program Berjalan", value="12")
-    m4.metric(label="Aspirasi Masuk", value=str(len(fetch_data(API_URL_CERITA, "Cerita"))))
+    m4.metric(label="Aspirasi Masuk", value=str(max(0, len(fetch_data(API_URL_CERITA, "Cerita")))))
 
     # SECTION: GALERI
     st.markdown('<div class="section-title">Peta Jejak Keberdampakan (Galeri)</div>', unsafe_allow_html=True)
@@ -143,10 +180,10 @@ if menu == "Home":
 elif menu == "Ruang Program":
     st.markdown('<div class="section-title">Ruang Program & Edukasi</div>', unsafe_allow_html=True)
     st.write("Jelajahi berbagai modul dan materi edukasi untuk mendukung perencanaan masa depan yang lebih baik.")
+    st.write("")
     
     if st.session_state['daftar_materi']:
         for m in st.session_state['daftar_materi']:
-            # Dibuat mirip kartu program
             with st.container():
                 st.subheader(f"📘 {m['Judul']}")
                 col_text, col_img = st.columns([2, 1])
@@ -166,7 +203,7 @@ elif menu == "Ruang Program":
 elif menu == "Ruang Cerita":
     st.markdown('<div class="section-title">Suara Remaja Berarti</div>', unsafe_allow_html=True)
     
-    col_info, col_form = st.columns([1, 1])
+    col_info, col_form = st.columns([1, 1], gap="large")
     with col_info:
         st.subheader("Bercerita Tanpa Batas")
         st.write("Partisipasi remaja bukan hanya hadir, tapi ikut berpikir dan menyampaikan aspirasi. Ruang ini adalah tempat aman untukmu bercerita (sepenuhnya anonim).")
@@ -203,14 +240,14 @@ elif menu == "Ruang Cerita":
 elif menu == "Kritik & Saran":
     st.markdown('<div class="section-title">Layanan Pengaduan & Bantuan</div>', unsafe_allow_html=True)
     
-    c1, c2 = st.columns(2)
+    c1, c2 = st.columns(2, gap="large")
     with c1:
         st.subheader("Kotak Masukan")
         daftar_kritik = fetch_data(API_URL_KRITIK, "Kritik")
         with st.form("kritik_form", clear_on_submit=True):
             topik = st.selectbox("Pilih Topik", ["Pelayanan", "Konten Web", "Lainnya"])
             isi_kritik = st.text_area("Tulis masukan untuk kami...")
-            if st.form_submit_button("Kirim Masukan") and isi_kritik:
+            if st.form_submit_button("Kirim Masukan", type="primary") and isi_kritik:
                 daftar_kritik.append({"Waktu": datetime.now().strftime("%d/%m/%Y %H:%M"), "Topik": topik, "Isi Kritik": isi_kritik})
                 save_data(API_URL_KRITIK, daftar_kritik)
                 st.success("Terima kasih atas masukannya!")
@@ -218,6 +255,7 @@ elif menu == "Kritik & Saran":
     with c2:
         st.subheader("Butuh Bantuan Cepat?")
         st.write("Jika kamu butuh ngobrol langsung secara personal atau butuh bantuan segera, tim konselor kami siap membantu via WhatsApp.")
+        st.write("")
         st.link_button("Hubungi Admin via WhatsApp 💬", "https://wa.me/qr/RTCENRAXQVZFM1", type="primary")
 
 # ==========================================
@@ -225,15 +263,18 @@ elif menu == "Kritik & Saran":
 # ==========================================
 elif menu == "Admin Panel":
     st.markdown('<div class="section-title">⚙️ Control Panel</div>', unsafe_allow_html=True)
-    admin_pass = st.text_input("Masukkan Password Admin", type="password")
+    
+    col_lock, _ = st.columns([1, 2])
+    with col_lock:
+        admin_pass = st.text_input("Masukkan Password Admin", type="password")
     
     if admin_pass == "admin123":
         st.success("Akses Diberikan!")
         tab1, tab2 = st.tabs(["Kelola Galeri", "Kelola Materi"])
         
         with tab1:
-            link_baru = st.text_input("Tambah Foto Galeri (URL URL)")
-            if st.button("Simpan Foto"):
+            link_baru = st.text_input("Tambah Foto Galeri (URL Gambar)")
+            if st.button("Simpan Foto", type="primary"):
                 st.session_state['daftar_galeri'].append(link_baru)
                 save_data(API_URL_GALERI, st.session_state['daftar_galeri'])
                 st.success("Berhasil ditambah!")
@@ -244,7 +285,7 @@ elif menu == "Admin Panel":
             j_baru = st.text_input("Judul")
             i_baru = st.text_area("Isi")
             f_baru = st.text_input("URL Gambar (Pisahkan koma jika banyak)")
-            if st.button("Posting Materi"):
+            if st.button("Posting Materi", type="primary"):
                 st.session_state['daftar_materi'].append({"Judul": j_baru, "Isi": i_baru, "Foto": f_baru if f_baru else "None"})
                 save_data(API_URL_MATERI, st.session_state['daftar_materi'])
                 st.success("Materi diposting!")
@@ -252,6 +293,6 @@ elif menu == "Admin Panel":
     elif admin_pass:
         st.error("Password Salah!")
 
-# Footer ala video
-st.markdown("---")
+# Footer 
+st.markdown("<br><hr>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #64748B;'>© 2026 Merah Putih - Melangitkan Harapan, Membumikan Kebermanfaatan.</p>", unsafe_allow_html=True)
