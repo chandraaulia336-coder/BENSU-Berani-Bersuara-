@@ -34,87 +34,120 @@ if 'daftar_materi' not in st.session_state: st.session_state['daftar_materi'] = 
 if 'daftar_galeri' not in st.session_state: st.session_state['daftar_galeri'] = fetch_data(API_URL_GALERI, "Galeri")
 if 'tagline' not in st.session_state: st.session_state['tagline'] = "Sebuah Gerakan dari Remaja untuk Melangitkan Harapan dan Membumikan Kebermanfaatan."
 
-# --- CUSTOM CSS (Tema Terang Diperbaiki) ---
-st.markdown("""
+# --- FUNGSI MEMBACA BACKGROUND GAMBAR LOKAL ---
+def get_base64_bg(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            encoded = base64.b64encode(img_file.read()).decode()
+        return f"data:image/webp;base64,{encoded}"
+    # Jika file tidak ketemu, pakai fallback url gradasi gelap estetik
+    return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000"
+
+# Memanggil gambar kamu (pastikan file bernama '25117787.webp' berada satu folder dengan app.py)
+bg_image = get_base64_bg("25117787.webp")
+
+# --- CUSTOM CSS (Menggunakan Gambar 25117787.webp sebagai Background) ---
+st.markdown(f"""
     <style>
-    /* Mengubah background jadi putih cerah */
-    .stApp {
-        background-color: #F8FAFC !important; 
-        color: #1E293B !important;
-    }
+    /* Mengubah background menggunakan gambar gradasi pilihanmu dengan overlay gelap agar tulisan terbaca */
+    .stApp {{
+        background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.9)), url("{bg_image}"); 
+        background-size: cover !important; 
+        background-position: center !important; 
+        background-attachment: fixed !important;
+        color: #F8FAFC !important;
+    }}
     
-    /* Styling Typography */
-    .hero-title { 
+    /* Styling Typography untuk background gelap */
+    .hero-title {{ 
         font-size: 3.5rem; 
         font-weight: 800; 
-        color: #1E3A8A; 
+        color: #FFFFFF; 
         line-height: 1.2;
         margin-bottom: 20px;
-    }
-    .hero-subtitle { 
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }}
+    .hero-subtitle {{ 
         font-size: 1.3rem; 
-        color: #0284C7; 
+        color: #38BDF8; /* Biru langit cerah agar kontras */
         font-weight: 600;
         margin-bottom: 20px;
-    }
-    .section-title {
+    }}
+    .section-title {{
         font-size: 2.2rem;
         font-weight: bold;
         text-align: center;
-        color: #0F172A;
+        color: #FFFFFF;
         margin-top: 40px;
         margin-bottom: 25px;
-    }
+    }}
     
-    /* PERBAIKAN: Memaksa warna angka statistik terlihat kontras */
-    [data-testid="stMetricValue"] {
-        color: #1E3A8A !important;
+    /* Kontras teks biasa di Streamlit */
+    .stApp p, .stApp span, .stApp label, .stApp div {{
+        color: #E2E8F0 !important;
+    }}
+    
+    /* Warna angka statistik agar menyala di background gelap */
+    [data-testid="stMetricValue"] {{
+        color: #38BDF8 !important;
         font-size: 2.5rem !important;
         font-weight: 700 !important;
-    }
-    [data-testid="stMetricLabel"] {
-        color: #475569 !important;
+    }}
+    [data-testid="stMetricLabel"] {{
+        color: #94A3B8 !important;
         font-size: 1rem !important;
         font-weight: 600 !important;
-    }
+    }}
     
-    /* Styling Kartu untuk bungkus Metric */
-    div.stMetric {
-        background-color: #FFFFFF !important;
+    /* Card penampung statistik (Semi transparan blur mewah / Glassmorphism) */
+    div.stMetric {{
+        background-color: rgba(30, 41, 59, 0.7) !important;
         padding: 25px 15px !important;
         border-radius: 16px !important;
-        border: 1px solid #E2E8F0 !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2) !important;
         text-align: center !important;
-    }
+    }}
 
-    /* PERBAIKAN: Modifikasi gaya menu pilihan agar kontras dan mudah dilihat */
-    div[data-testid="stRadio"] > label {
-        display: none; /* Sembunyikan label bawaan */
-    }
-    div[data-testid="stRadio"] > div {
-        background-color: #E2E8F0;
+    /* Navigasi Menu horizontal atas */
+    div[data-testid="stRadio"] > label {{
+        display: none;
+    }}
+    div[data-testid="stRadio"] > div {{
+        background-color: rgba(30, 41, 59, 0.6);
         padding: 6px;
         border-radius: 12px;
         gap: 10px;
-    }
-    div[data-testid="stRadio"] label[data-baseweb="radio"] {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }}
+    div[data-testid="stRadio"] label[data-baseweb="radio"] {{
         background-color: transparent;
         padding: 10px 20px !important;
         border-radius: 8px;
-        color: #334155 !important;
+        color: #94A3B8 !important;
         font-weight: 600;
         transition: all 0.2s ease;
-    }
-    /* Ketika menu dipilih */
-    div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {
-        background-color: #1E3A8A !important;
-        color: #FFFFFF !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+    }}
+    /* Ketika menu navigasi aktif dipilih */
+    div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {{
+        background-color: #38BDF8 !important;
+        color: #0F172A !important;
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+    }}
+    div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) span {{
+        color: #0F172A !important;
+    }}
     
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* Merapikan border expander dan form di mode gelap */
+    .stExpander, div[data-testid="stForm"] {{
+        background-color: rgba(30, 41, 59, 0.4) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+    }}
+    
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
     </style>
 """, unsafe_allow_html=True)
 
@@ -125,17 +158,16 @@ with col_logo:
     if os.path.exists("Logo bumper (1).png"):
         st.image("Logo bumper (1).png", width=140)
     else:
-        st.markdown("<h3 style='color:#1E3A8A; margin:0;'>MERAH PUTIH</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color:#FFFFFF; margin:0;'>MERAH PUTIH</h3>", unsafe_allow_html=True)
 
 with col_nav:
-    # Navigasi dengan style tombol tab baru yang kontras
     menu = st.radio(
         "Menu Navigasi", 
         ["Home", "Ruang Program", "Ruang Cerita", "Kritik & Saran", "Admin Panel"], 
         horizontal=True
     )
 
-st.markdown("<hr style='margin-top:5px; margin-bottom:25px; border-color:#E2E8F0;'>", unsafe_allow_html=True)
+st.markdown("<hr style='margin-top:5px; margin-bottom:25px; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
 # ==========================================
 # MENU 1: HOME (Beranda & Galeri)
@@ -294,5 +326,5 @@ elif menu == "Admin Panel":
         st.error("Password Salah!")
 
 # Footer 
-st.markdown("<br><hr>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #64748B;'>© 2026 Merah Putih - Melangitkan Harapan, Membumikan Kebermanfaatan.</p>", unsafe_allow_html=True)
+st.markdown("<br><hr style='border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #94A3B8;'>© 2026 Merah Putih - Melangitkan Harapan, Membumikan Kebermanfaatan.</p>", unsafe_allow_html=True)
