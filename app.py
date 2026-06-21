@@ -15,19 +15,35 @@ API_URL_CERITA = "https://script.google.com/macros/s/AKfycbzJA8fG0PmUBxjoacsCrl2
 API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
 # ==========================================================
 
-# --- FUNGSI DATABASE ---
-@st.cache_data(ttl=60)
+# --- FUNGSI DATABASE (Dengan Pendeteksi Error) ---
+# Cache dihapus sementara biar error-nya langsung kelihatan secara real-time
 def fetch_data(url, name):
-    if not url.startswith("https://script.google.com"): return []
+    if not url.startswith("https://script.google.com"): 
+        st.warning(f"URL {name} belum valid.")
+        return []
     try:
         res = requests.get(url)
-        return res.json() if res.status_code == 200 else []
-    except: return []
+        if res.status_code == 200:
+            try:
+                return res.json()
+            except ValueError:
+                st.error(f"❌ Error {name}: Script Google ngga ngirim format JSON. Pastikan settingan deployment-nya 'Anyone' (Siapa Saja) dan bukan butuh login.")
+                return []
+        else:
+            st.error(f"❌ Error {name}: Google Sheets nolak akses! Status code: {res.status_code}")
+            return []
+    except Exception as e: 
+        st.error(f"❌ Gagal narik {name}. Error sistem: {e}")
+        return []
 
 def save_data(url, data_list):
     if url.startswith("https://script.google.com"):
-        try: requests.post(url, json={"data": data_list})
-        except: pass
+        try: 
+            res = requests.post(url, json={"data": data_list})
+            if res.status_code != 200:
+                st.error(f"❌ Gagal nyimpen data {url[-10:]}! Google nolak dengan kode: {res.status_code}")
+        except Exception as e: 
+            st.error(f"❌ Gagal ngirim data ke Sheets: {e}")
 
 # --- INISIALISASI SESSION STATE ---
 if 'daftar_materi' not in st.session_state: st.session_state['daftar_materi'] = fetch_data(API_URL_MATERI, "Materi")
@@ -43,13 +59,13 @@ def get_base64_bg(image_path):
     # Jika file tidak ketemu, pakai fallback url gradasi gelap estetik
     return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000"
 
-# Memanggil gambar kamu (pastikan file bernama '25117787.webp' berada satu folder dengan app.py)
+# Memanggil gambar (pastikan file bernama '25117787.webp' berada satu folder dengan app.py)
 bg_image = get_base64_bg("25117787.webp")
 
-# --- CUSTOM CSS (Menggunakan Gambar 25117787.webp sebagai Background) ---
+# --- CUSTOM CSS ---
 st.markdown(f"""
     <style>
-    /* Mengubah background menggunakan gambar gradasi pilihanmu dengan overlay gelap agar tulisan terbaca */
+    /* Background dengan overlay gelap */
     .stApp {{
         background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.9)), url("{bg_image}"); 
         background-size: cover !important; 
@@ -58,7 +74,6 @@ st.markdown(f"""
         color: #F8FAFC !important;
     }}
     
-    /* Styling Typography untuk background gelap */
     .hero-title {{ 
         font-size: 3.5rem; 
         font-weight: 800; 
@@ -69,7 +84,7 @@ st.markdown(f"""
     }}
     .hero-subtitle {{ 
         font-size: 1.3rem; 
-        color: #38BDF8; /* Biru langit cerah agar kontras */
+        color: #38BDF8; 
         font-weight: 600;
         margin-bottom: 20px;
     }}
@@ -82,12 +97,10 @@ st.markdown(f"""
         margin-bottom: 25px;
     }}
     
-    /* Kontras teks biasa di Streamlit */
     .stApp p, .stApp span, .stApp label, .stApp div {{
         color: #E2E8F0 !important;
     }}
     
-    /* Warna angka statistik agar menyala di background gelap */
     [data-testid="stMetricValue"] {{
         color: #38BDF8 !important;
         font-size: 2.5rem !important;
@@ -99,7 +112,6 @@ st.markdown(f"""
         font-weight: 600 !important;
     }}
     
-    /* Card penampung statistik (Semi transparan blur mewah / Glassmorphism) */
     div.stMetric {{
         background-color: rgba(30, 41, 59, 0.7) !important;
         padding: 25px 15px !important;
@@ -110,10 +122,7 @@ st.markdown(f"""
         text-align: center !important;
     }}
 
-    /* Navigasi Menu horizontal atas */
-    div[data-testid="stRadio"] > label {{
-        display: none;
-    }}
+    div[data-testid="stRadio"] > label {{ display: none; }}
     div[data-testid="stRadio"] > div {{
         background-color: rgba(30, 41, 59, 0.6);
         padding: 6px;
@@ -129,7 +138,6 @@ st.markdown(f"""
         font-weight: 600;
         transition: all 0.2s ease;
     }}
-    /* Ketika menu navigasi aktif dipilih */
     div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {{
         background-color: #38BDF8 !important;
         color: #0F172A !important;
@@ -139,7 +147,6 @@ st.markdown(f"""
         color: #0F172A !important;
     }}
     
-    /* Merapikan border expander dan form di mode gelap */
     .stExpander, div[data-testid="stForm"] {{
         background-color: rgba(30, 41, 59, 0.4) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -173,7 +180,6 @@ st.markdown("<hr style='margin-top:5px; margin-bottom:25px; border-color:rgba(25
 # MENU 1: HOME (Beranda & Galeri)
 # ==========================================
 if menu == "Home":
-    # HERO SECTION
     h_col1, h_col2 = st.columns([1.2, 1], gap="large")
     
     with h_col1:
@@ -189,7 +195,6 @@ if menu == "Home":
         else:
             st.info("Tambahkan file 'genre_juara1.jpg' untuk gambar Hero.")
 
-    # SECTION: ANGKA (STATISTIK)
     st.markdown('<div class="section-title">Merah Putih dalam Angka</div>', unsafe_allow_html=True)
     m1, m2, m3, m4 = st.columns(4)
     m1.metric(label="Tahun Dedikasi", value="1+")
@@ -197,7 +202,6 @@ if menu == "Home":
     m3.metric(label="Program Berjalan", value="12")
     m4.metric(label="Aspirasi Masuk", value=str(max(0, len(fetch_data(API_URL_CERITA, "Cerita")))))
 
-    # SECTION: GALERI
     st.markdown('<div class="section-title">Peta Jejak Keberdampakan (Galeri)</div>', unsafe_allow_html=True)
     if st.session_state['daftar_galeri']:
         g_cols = st.columns(3)
@@ -267,7 +271,7 @@ elif menu == "Ruang Cerita":
         st.write("Belum ada aspirasi yang masuk.")
 
 # ==========================================
-# MENU 4: KRITIK & SARAN
+# MENU 4: KRITIK & Saran
 # ==========================================
 elif menu == "Kritik & Saran":
     st.markdown('<div class="section-title">Layanan Pengaduan & Bantuan</div>', unsafe_allow_html=True)
