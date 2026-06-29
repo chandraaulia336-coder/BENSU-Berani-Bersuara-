@@ -10,7 +10,7 @@ st.set_page_config(page_title="Merah Putih - Remaja Terencana", layout="wide", i
 # ==========================================================
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
-API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"
+API_URL_GALERI = "https://script.google.com/macros/s/AKfycbz-rX4p9SpDIE1TVv1zuItWKKgKxd0AJSWpib8XGCjE4oHb_n1RAH-4azED-MCCjpaHXg/exec"
 API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxCPeC-7fE7Fu2O1J5dJ7-juwi3iQrl0L0ug3nonVuTIf_sC0yJYjZ6mS4HaQDH4y-g/exec"
 API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
 # ==========================================================
@@ -41,7 +41,7 @@ def save_materi_sheets(data_list):
 
 # --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
-    if not API_URL_GALERI.startswith("https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"): 
+    if not API_URL_GALERI.startswith("https://script.google.com/macros/s/AKfycbz-rX4p9SpDIE1TVv1zuItWKKgKxd0AJSWpib8XGCjE4oHb_n1RAH-4azED-MCCjpaHXg/exec"): 
         st.warning("⚠️ URL Galeri belum lu ganti di app.py dengan benar, bro!")
         return []
     try:
@@ -55,7 +55,7 @@ def fetch_galeri_sheets():
         return []
 
 def save_galeri_sheets(data_list):
-    if API_URL_GALERI.startswith("https://script.google.com"):
+    if API_URL_GALERI.startswith("https://script.google.com/macros/s/AKfycbz-rX4p9SpDIE1TVv1zuItWKKgKxd0AJSWpib8XGCjE4oHb_n1RAH-4azED-MCCjpaHXg/exec"):
         try: 
             res = requests.post(API_URL_GALERI, json={"data": data_list})
             if res.status_code != 200:
