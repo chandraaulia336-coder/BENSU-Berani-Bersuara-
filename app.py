@@ -9,7 +9,7 @@ st.set_page_config(page_title="Merah Putih - Remaja Terencana", layout="wide", i
 
 # ==========================================================
 # PASTE MASING-MASING URL WEB APP LU DI SINI
-API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
+API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzSxbht6nsLMbgK4tbVV5Z6HJ_eQXVPsUZYObMhFS5H40iBZo2kZrWlPYtQzSQra0F7GA/exec"
 API_URL_GALERI = "https://script.google.com/macros/s/AKfycbz-rX4p9SpDIE1TVv1zuItWKKgKxd0AJSWpib8XGCjE4oHb_n1RAH-4azED-MCCjpaHXg/exec"
 API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxCPeC-7fE7Fu2O1J5dJ7-juwi3iQrl0L0ug3nonVuTIf_sC0yJYjZ6mS4HaQDH4y-g/exec"
 API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
@@ -17,7 +17,7 @@ API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW
 
 # --- FUNGSI DATABASE MATERI ---
 def fetch_materi_sheets():
-    if not API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"): 
+    if not API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbzSxbht6nsLMbgK4tbVV5Z6HJ_eQXVPsUZYObMhFS5H40iBZo2kZrWlPYtQzSQra0F7GA/exec"): 
         st.warning("⚠️ URL Materi belum lu ganti di app.py dengan benar, bro!")
         return []
     try:
@@ -31,7 +31,7 @@ def fetch_materi_sheets():
         return []
 
 def save_materi_sheets(data_list):
-    if API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"):
+    if API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbzSxbht6nsLMbgK4tbVV5Z6HJ_eQXVPsUZYObMhFS5H40iBZo2kZrWlPYtQzSQra0F7GA/exec"):
         try: 
             res = requests.post(API_URL_MATERI, json={"data": data_list})
             if res.status_code != 200:
