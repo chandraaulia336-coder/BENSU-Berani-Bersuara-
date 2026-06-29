@@ -11,7 +11,7 @@ st.set_page_config(page_title="Merah Putih - Remaja Terencana", layout="wide", i
 # PASTE MASING-MASING URL WEB APP LU DI SINI
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"
 API_URL_GALERI = "https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"
-API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"
+API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxCPeC-7fE7Fu2O1J5dJ7-juwi3iQrl0L0ug3nonVuTIf_sC0yJYjZ6mS4HaQDH4y-g/exec"
 API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
 # ==========================================================
 
@@ -65,7 +65,7 @@ def save_galeri_sheets(data_list):
 
 # --- FUNGSI DATABASE RUANG CERITA ---
 def fetch_cerita_sheets():
-    if not API_URL_CERITA.startswith("https://script.google.com"): 
+    if not API_URL_CERITA.startswith("https://script.google.com/macros/s/AKfycbxCPeC-7fE7Fu2O1J5dJ7-juwi3iQrl0L0ug3nonVuTIf_sC0yJYjZ6mS4HaQDH4y-g/exec"): 
         return []
     try:
         res = requests.get(API_URL_CERITA)
@@ -74,7 +74,7 @@ def fetch_cerita_sheets():
     except: return []
 
 def save_cerita_sheets(data_list):
-    if API_URL_CERITA.startswith("https://script.google.com"):
+    if API_URL_CERITA.startswith("https://script.google.com/macros/s/AKfycbxCPeC-7fE7Fu2O1J5dJ7-juwi3iQrl0L0ug3nonVuTIf_sC0yJYjZ6mS4HaQDH4y-g/exec"):
         try: requests.post(API_URL_CERITA, json={"data": data_list})
         except: pass
 
