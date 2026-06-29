@@ -109,9 +109,14 @@ def get_base64_bg(image_path):
 
 bg_image = get_base64_bg("25117787.webp")
 
-# --- CUSTOM CSS (TAMPILAN MODERN) ---
+# --- CUSTOM CSS (TAMPILAN MODERN + SMOOTH SCROLL) ---
 st.markdown(f"""
     <style>
+    /* Efek Smooth Scroll */
+    html {{
+        scroll-behavior: smooth;
+    }}
+    
     .stApp {{
         background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.9)), url("{bg_image}"); 
         background-size: cover !important; 
@@ -144,6 +149,27 @@ st.markdown(f"""
     
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
+    
+    /* Tombol Kustom Pengganti st.button agar bisa scroll */
+    .btn-merah-putih {{
+        display: inline-block;
+        background-color: #FF4B4B; 
+        color: #FFFFFF !important;
+        padding: 10px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+        border: 1px solid #FF4B4B;
+        text-align: center;
+        margin-top: 10px;
+    }}
+    .btn-merah-putih:hover {{
+        background-color: #FF6666;
+        border-color: #FF6666;
+        color: #FFFFFF !important;
+        text-decoration: none;
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -172,7 +198,9 @@ if menu == "Beranda & Galeri":
         st.markdown(f'<div class="hero-subtitle">{st.session_state["tagline"]}</div>', unsafe_allow_html=True)
         st.write('"Jadilah pemuda yang aktif, harmonis, unggul, terencana, inspiratif, & hebat. Karena masa depan dimulai dari langkah kecil hari ini."')
         st.write("")
-        st.button("Mengenal Lebih Dekat", type="primary")
+        
+        # PERUBAHAN: Tombol st.button diganti dengan tag <a> yang mengarah ke id #galeri
+        st.markdown('<a href="#galeri" class="btn-merah-putih">Mengenal Lebih Dekat</a>', unsafe_allow_html=True)
 
     with h_col2:
         if os.path.exists("genre_juara1.jpg"):
@@ -185,7 +213,9 @@ if menu == "Beranda & Galeri":
     m3.metric(label="Program Berjalan", value="12")
     m4.metric(label="Aspirasi Masuk", value=str(max(0, len(fetch_cerita_sheets()))))
 
-    st.markdown('<div class="section-title">Peta Jejak Keberdampakan (Galeri)</div>', unsafe_allow_html=True)
+    # PERUBAHAN: Menambahkan id="galeri" di div judul galeri
+    st.markdown('<div id="galeri" class="section-title">Peta Jejak Keberdampakan (Galeri)</div>', unsafe_allow_html=True)
+    
     if st.session_state['daftar_galeri']:
         g_cols = st.columns(3)
         for i, url_img in enumerate(st.session_state['daftar_galeri']):
