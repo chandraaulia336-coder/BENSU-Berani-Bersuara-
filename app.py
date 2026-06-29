@@ -17,7 +17,7 @@ API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW
 
 # --- FUNGSI DATABASE MATERI ---
 def fetch_materi_sheets():
-    if not API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"): 
+    if not API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"): 
         st.warning("⚠️ URL Materi belum lu ganti di app.py dengan benar, bro!")
         return []
     try:
@@ -31,7 +31,7 @@ def fetch_materi_sheets():
         return []
 
 def save_materi_sheets(data_list):
-    if API_URL_MATERI.startswith("https://script.google.com"):
+    if API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbzbiv0Q2jZoW0lnvQ0iQjFGnPVCij_2mADOPTn-rlYxGj19nVCrjmSkAlOJnBiKDfXB/exec"):
         try: 
             res = requests.post(API_URL_MATERI, json={"data": data_list})
             if res.status_code != 200:
