@@ -17,7 +17,7 @@ API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW
 
 # --- FUNGSI DATABASE MATERI ---
 def fetch_materi_sheets():
-    if not API_URL_MATERI.startswith("https://script.google.com"): 
+    if not API_URL_MATERI.startswith("https://script.google.com/macros/s/AKfycbxVCt4UHwrkjwLmS0wdUKKIsa5k6gUB1Yq2HFR3uCQSr-WPg334yaS5f-I48y8O3nw/exec"): 
         st.warning("⚠️ URL Materi belum lu ganti di app.py dengan benar, bro!")
         return []
     try:
@@ -41,7 +41,7 @@ def save_materi_sheets(data_list):
 
 # --- FUNGSI DATABASE GALERI ---
 def fetch_galeri_sheets():
-    if not API_URL_GALERI.startswith("https://script.google.com"): 
+    if not API_URL_GALERI.startswith("https://script.google.com/macros/s/AKfycbwIJXXeB58YCeWBqOwLZ5wtLv9Se901K5FaZS5-6YBIjt-I8dtDp1bCQoHgpd_AcF4z/exec"): 
         st.warning("⚠️ URL Galeri belum lu ganti di app.py dengan benar, bro!")
         return []
     try:
