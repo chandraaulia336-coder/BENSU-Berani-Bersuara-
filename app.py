@@ -5,7 +5,7 @@ import os
 import requests
 
 # Konfigurasi Halaman (Lebar Penuh)
-st.set_page_config(page_title="Merah Putih - Remaja Terencana", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Merpati Putih - Remaja Terencana", layout="wide", initial_sidebar_state="collapsed")
 
 # ==========================================================
 # PASTE MASING-MASING URL WEB APP LU DI SINI
@@ -151,7 +151,7 @@ st.markdown(f"""
     footer {{visibility: hidden;}}
     
     /* Tombol Kustom Pengganti st.button agar bisa scroll */
-    .btn-merah-putih {{
+    .btn-merpati-putih {{
         display: inline-block;
         background-color: #FF4B4B; 
         color: #FFFFFF !important;
@@ -164,7 +164,7 @@ st.markdown(f"""
         text-align: center;
         margin-top: 10px;
     }}
-    .btn-merah-putih:hover {{
+    .btn-merpati-putih:hover {{
         background-color: #FF6666;
         border-color: #FF6666;
         color: #FFFFFF !important;
@@ -194,23 +194,23 @@ st.markdown("<hr style='margin-top:5px; margin-bottom:25px; border-color:rgba(25
 if menu == "Beranda & Galeri":
     h_col1, h_col2 = st.columns([1.2, 1], gap="large")
     with h_col1:
-        st.markdown('<div class="hero-title">Merah Putih: Menuju Era Remaja Terencana.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="hero-title">Merpati Putih: Menuju Era Remaja Terencana.</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="hero-subtitle">{st.session_state["tagline"]}</div>', unsafe_allow_html=True)
         st.write('"Jadilah pemuda yang aktif, harmonis, unggul, terencana, inspiratif, & hebat. Karena masa depan dimulai dari langkah kecil hari ini."')
         st.write("")
         
         # PERUBAHAN: Tombol st.button diganti dengan tag <a> yang mengarah ke id #galeri
-        st.markdown('<a href="#galeri" class="btn-merah-putih">Mengenal Lebih Dekat</a>', unsafe_allow_html=True)
+        st.markdown('<a href="#galeri" class="btn-merpati-putih">Mengenal Lebih Dekat</a>', unsafe_allow_html=True)
 
     with h_col2:
         if os.path.exists("genre_juara1.jpg"):
             st.image("genre_juara1.jpg", use_container_width=True)
 
-    st.markdown('<div class="section-title">Merah Putih dalam Angka</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">Merpati Putih dalam Angka</div>', unsafe_allow_html=True)
     m1, m2, m3, m4 = st.columns(4)
     m1.metric(label="Tahun Dedikasi", value="1+")
-    m2.metric(label="Remaja Terdampak", value="500+")
-    m3.metric(label="Program Berjalan", value="12")
+    m2.metric(label="Remaja Terdampak", value="200+")
+    m3.metric(label="Program Berjalan", value="3")
     m4.metric(label="Aspirasi Masuk", value=str(max(0, len(fetch_cerita_sheets()))))
 
     # PERUBAHAN: Menambahkan id="galeri" di div judul galeri
@@ -312,7 +312,7 @@ elif menu == "Admin Panel":
     with col_lock:
         admin_pass = st.text_input("Masukkan Password Admin", type="password")
         
-    if admin_pass == "admin123":
+    if admin_pass == "chandikia":
         st.success("🛠️ Akses Terbuka")
         
         # Admin Edit Tagline
