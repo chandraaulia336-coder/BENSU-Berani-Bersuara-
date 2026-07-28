@@ -247,9 +247,11 @@ if menu == "Beranda & Peta":
       latitude=-7.7279, longitude=109.0063, zoom=12.2, pitch=25
   )
 
+  # INI BAGIAN YANG DIPERBAIKI (CART & DARK)
   st.pydeck_chart(
       pdk.Deck(
-          map_style="carto-dark", # Ganti pakai Carto Dark (Bebas API Key)
+          map_provider="carto",
+          map_style="dark",
           initial_view_state=view_state,
           layers=[layer_polygon],
           tooltip={
