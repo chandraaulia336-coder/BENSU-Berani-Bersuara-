@@ -1,56 +1,86 @@
-import streamlit as st
-from datetime import datetime
 import base64
+from datetime import datetime
 import os
-import requests
-import pandas as pd
 import random
+import pandas as pd
+import pydeck as pdk
+import requests
+import streamlit as st
 
+# ==========================================
 # 1. KONFIGURASI HALAMAN
+# ==========================================
 st.set_page_config(
     page_title="Merpati Putih - Remaja Terencana",
     page_icon="🕊️",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
+# ==========================================
 # 2. URL GOOGLE APPS SCRIPT (API ENDPOINTS)
+# ==========================================
 API_URL_MATERI = "https://script.google.com/macros/s/AKfycbwLfXYY-9-PwdVB1xQKtD1c2npawNgTeOuGHmDzPr7LGC1inbTxuxwnt8m7Z0LcJHsxyA/exec"
 API_URL_GALERI = "https://script.google.com/macros/s/AKfycbz-rX4p9SpDIE1TVv1zuItWKKgKxd0AJSWpib8XGCjE4oHb_n1RAH-4azED-MCCjpaHXg/exec"
 API_URL_CERITA = "https://script.google.com/macros/s/AKfycbxCPeC-7fE7Fu2O1J5dJ7-juwi3iQrl0L0ug3nonVuTIf_sC0yJYjZ6mS4HaQDH4y-g/exec"
 API_URL_KRITIK = "https://script.google.com/macros/s/AKfycbxMSnhdLOf1RbVDMRzxuiW1ITEvGQWcMcF5dTxiTmk7HWC4M8u21CYQ_jtrOdoQOI6B/exec"
 
+
+# ==========================================
 # 3. HELPER FUNCTIONS
+# ==========================================
 def fetch_api_data(url):
-    if not url or "script.google.com" not in url: return []
-    try:
-        res = requests.get(url, timeout=6)
-        return res.json() if res.status_code == 200 else []
-    except Exception: return []
+  if not url or "script.google.com" not in url:
+    return []
+  try:
+    res = requests.get(url, timeout=6)
+    return res.json() if res.status_code == 200 else []
+  except Exception:
+    return []
+
 
 def save_api_data(url, data_list):
-    if not url or "script.google.com" not in url: return False
-    try:
-        res = requests.post(url, json={"data": data_list}, timeout=8)
-        return res.status_code == 200
-    except Exception: return False
+  if not url or "script.google.com" not in url:
+    return False
+  try:
+    res = requests.post(url, json={"data": data_list}, timeout=8)
+    return res.status_code == 200
+  except Exception:
+    return False
 
+
+# ==========================================
 # 4. SESSION STATE
-if 'daftar_materi' not in st.session_state: st.session_state['daftar_materi'] = fetch_api_data(API_URL_MATERI)
-if 'daftar_galeri' not in st.session_state: st.session_state['daftar_galeri'] = fetch_api_data(API_URL_GALERI)
-if 'tagline' not in st.session_state: st.session_state['tagline'] = "Sebuah Gerakan dari Remaja untuk Melangitkan Harapan dan Membumikan Kebermanfaatan."
+# ==========================================
+if "daftar_materi" not in st.session_state:
+  st.session_state["daftar_materi"] = fetch_api_data(API_URL_MATERI)
+if "daftar_galeri" not in st.session_state:
+  st.session_state["daftar_galeri"] = fetch_api_data(API_URL_GALERI)
+if "tagline" not in st.session_state:
+  st.session_state["tagline"] = (
+      "Sebuah Gerakan dari Remaja untuk Melangitkan Harapan dan Membumikan"
+      " Kebermanfaatan."
+  )
 
+
+# ==========================================
 # 5. WALLPAPER BACKGROUND
+# ==========================================
 def get_base64_bg(image_path):
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as img_file: encoded = base64.b64encode(img_file.read()).decode()
-        return f"data:image/webp;base64,{encoded}"
-    return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000"
+  if os.path.exists(image_path):
+    with open(image_path, "rb") as img_file:
+      encoded = base64.b64encode(img_file.read()).decode()
+    return f"data:image/webp;base64,{encoded}"
+  return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000"
+
 
 bg_image = get_base64_bg("25117787.webp")
 
-# 6. CUSTOM CSS
-st.markdown(f"""
+# ==========================================
+# 6. CUSTOM CSS (STYLING)
+# ==========================================
+st.markdown(
+    f"""
     <style>
     html {{ scroll-behavior: smooth; }}
     .stApp {{
@@ -75,266 +105,718 @@ st.markdown(f"""
     .btn-merpati-putih {{ display: inline-block; background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%); color: #FFFFFF !important; padding: 12px 28px; border-radius: 10px; text-decoration: none; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35); }}
     .story-card {{ background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 16px; border-left: 4px solid #38BDF8; margin-bottom: 15px; }}
     .admin-reply-card {{ background: rgba(16, 185, 129, 0.15); border-radius: 10px; padding: 12px; border-left: 4px solid #10B981; margin-top: 10px; }}
-    .sertifikat {{ background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); padding: 30px; border-radius: 15px; text-align: center; color: white !important; border: 4px dashed #fef3c7; margin-top: 20px; }}
+    .sertifikat {{ background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); padding: 30px; border-radius: 15px; text-align: center; color: white !important; border: 4px dashed #fef3c7; margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }}
     </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-# 7. HEADER & NAV
+# ==========================================
+# 7. HEADER & NAVIGATION
+# ==========================================
 col_logo, col_nav = st.columns([1, 4], vertical_alignment="center")
 with col_logo:
-    if os.path.exists("Logo bumper (1).png"): st.image("Logo bumper (1).png", width=140)
-    else: st.markdown("<h3 style='color:#FFFFFF; margin:0; font-weight:800;'>🕊️ MERPATI PUTIH</h3>", unsafe_allow_html=True)
+  if os.path.exists("Logo bumper (1).png"):
+    st.image("Logo bumper (1).png", width=140)
+  else:
+    st.markdown(
+        "<h3 style='color:#FFFFFF; margin:0; font-weight:800;'>🕊️ MERPATI"
+        " PUTIH</h3>",
+        unsafe_allow_html=True,
+    )
+
 with col_nav:
-    # UBAH NAMA MENU BIAR MAKIN PROFESIONAL
-    menu = st.radio("Menu Navigation", ["Beranda & Peta", "Edukasi & Tools Gizi", "Kuis GenRe", "Ruang Cerita (Anonim)", "Kritik & Saran", "Admin Panel"], horizontal=True)
-st.markdown("<hr style='margin-top:5px; margin-bottom:25px; border-color:rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
+  menu = st.radio(
+      "Menu Navigation",
+      [
+          "Beranda & Peta",
+          "Edukasi & Tools Gizi",
+          "Kuis GenRe",
+          "Ruang Cerita (Anonim)",
+          "Kritik & Saran",
+          "Admin Panel",
+      ],
+      horizontal=True,
+  )
+
+st.markdown(
+    "<hr style='margin-top:5px;"
+    " margin-bottom:25px; border-color:rgba(255,255,255,0.1);'>",
+    unsafe_allow_html=True,
+)
 
 # ---------------------------------------------------------
-# MENU 1: BERANDA & PETA
+# MENU 1: BERANDA & PETA SPASIAL
 # ---------------------------------------------------------
 if menu == "Beranda & Peta":
-    h_col1, h_col2 = st.columns([1.2, 1], gap="large")
-    with h_col1:
-        st.markdown('<div class="hero-title">Merpati Putih: Menuju Era Remaja Terencana.</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="hero-subtitle">{st.session_state["tagline"]}</div>', unsafe_allow_html=True)
-        st.write("Jadilah pemuda yang aktif, harmonis, unggul, terencana, inspiratif, & hebat. Masa depan yang cemerlang dimulai dari langkah nyata hari ini.")
-        
-        # Fitur Kecil: Generator Quotes Remaja
-        quotes = [
-            "Perencanaan hari ini adalah kunci kebahagiaan keluarga esok hari. - GenRe",
-            "Remaja Hebat itu yang menjauhi Narkoba, Seks Bebas, dan Pernikahan Dini!",
-            "Tunda nikah muda, kejar prestasi setinggi-tingginya!",
-            "Keluarga berkualitas berawal dari remaja yang cerdas."
-        ]
-        if st.button("🎲 Dapatkan Motivasi GenRe Hari Ini"):
-            st.info(f"💡 *\"{random.choice(quotes)}\"*")
-            
-        st.markdown('<br><a href="#galeri" class="btn-merpati-putih">Mengenal Lebih Dekat 🚀</a>', unsafe_allow_html=True)
-    
-    with h_col2:
-        if os.path.exists("genre_juara1.jpg"): st.image("genre_juara1.jpg", use_container_width=True)
-        else: st.image("https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000", use_container_width=True)
+  h_col1, h_col2 = st.columns([1.2, 1], gap="large")
+  with h_col1:
+    st.markdown(
+        '<div class="hero-title">Merpati Putih: Menuju Era Remaja'
+        " Terencana.</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f'<div class="hero-subtitle">{st.session_state["tagline"]}</div>',
+        unsafe_allow_html=True,
+    )
+    st.write(
+        "Jadilah pemuda yang aktif, harmonis, unggul, terencana, inspiratif, &"
+        " hebat. Masa depan yang cemerlang dimulai dari langkah nyata hari ini."
+    )
 
-    st.markdown('<div class="section-title">📊 Merpati Putih Dalam Angka</div>', unsafe_allow_html=True)
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric(label="Tahun Dedikasi", value="1+")
-    m2.metric(label="Remaja Terdampak", value="200+")
-    m3.metric(label="Titik Wilayah", value="12")
-    cerita_data = fetch_api_data(API_URL_CERITA)
-    m4.metric(label="Aspirasi Masuk", value=str(len(cerita_data)))
+    quotes = [
+        (
+            "Perencanaan hari ini adalah kunci kebahagiaan keluarga esok hari."
+            " - GenRe"
+        ),
+        (
+            "Remaja Hebat itu yang menjauhi Narkoba, Seks Bebas, dan Pernikahan"
+            " Dini!"
+        ),
+        "Tunda nikah muda, kejar prestasi setinggi-tingginya!",
+        "Keluarga berkualitas berawal dari remaja yang cerdas.",
+    ]
+    if st.button("🎲 Dapatkan Motivasi GenRe Hari Ini"):
+      st.info(f'💡 *"{random.choice(quotes)}"*')
 
-    # FITUR BARU 1: PETA SEBARAN (JURI SUKA INI)
-    st.markdown('<div class="section-title">🗺️ Peta Jangkauan Sosialisasi (Kab. Cilacap)</div>', unsafe_allow_html=True)
-    st.write("Visualisasi wilayah kecamatan dan sekolah di Kabupaten Cilacap yang telah menerima intervensi dan edukasi dari program Merpati Putih.")
-    # Data koordinat dummy sekitar Cilacap (-7.72, 109.0)
-    map_data = pd.DataFrame({
-        'lat': [-7.7279, -7.7150, -7.7350, -7.7010, -7.6850],
-        'lon': [109.0063, 109.0200, 108.9950, 109.0150, 108.9800]
-    })
-    st.map(map_data, zoom=11)
+    st.markdown(
+        '<br><a href="#galeri" class="btn-merpati-putih">Mengenal Lebih Dekat'
+        " 🚀</a>",
+        unsafe_allow_html=True,
+    )
 
-    st.markdown('<div id="galeri" class="section-title">🖼️ Peta Jejak Keberdampakan (Galeri)</div>', unsafe_allow_html=True)
-    if st.session_state['daftar_galeri']:
-        g_cols = st.columns(3)
-        for i, url_img in enumerate(st.session_state['daftar_galeri']): g_cols[i % 3].image(url_img, use_container_width=True)
-    else: st.info("Belum ada foto galeri yang diunggah.")
+  with h_col2:
+    if os.path.exists("genre_juara1.jpg"):
+      st.image("genre_juara1.jpg", use_container_width=True)
+    else:
+      st.image(
+          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000",
+          use_container_width=True,
+      )
+
+  st.markdown(
+      '<div class="section-title">📊 Merpati Putih Dalam Angka</div>',
+      unsafe_allow_html=True,
+  )
+  m1, m2, m3, m4 = st.columns(4)
+  m1.metric(label="Tahun Dedikasi", value="1+")
+  m2.metric(label="Remaja Terdampak", value="200+")
+  m3.metric(label="Titik Wilayah", value="12")
+  cerita_data = fetch_api_data(API_URL_CERITA)
+  m4.metric(label="Aspirasi Masuk", value=str(len(cerita_data)))
+
+  # PETA SPASIAL BLUE ZONE (PYDECK POLYGON)
+  st.markdown(
+      '<div class="section-title">🗺️ Peta Zonasi "Blue Zone" (Cilacap'
+      " Selatan)</div>",
+      unsafe_allow_html=True,
+  )
+  st.write(
+      "Visualisasi wilayah **Kecamatan Cilacap Selatan** sebagai percontohan"
+      " wilayah intervensi khusus (Blue Zone) program Merpati Putih."
+  )
+
+  # Koordinat Poligon Cilacap Selatan [Longitude, Latitude]
+  zona_cilacap_selatan = [
+      [108.990, -7.745],
+      [109.025, -7.745],
+      [109.020, -7.710],
+      [108.995, -7.710],
+      [108.990, -7.745],
+  ]
+
+  df_zona = pd.DataFrame({
+      "zona": ["Kec. Cilacap Selatan (Blue Zone)"],
+      "deskripsi": ["Wilayah percontohan bebas Stunting & Triad KRR"],
+      "koordinat": [[zona_cilacap_selatan]],
+  })
+
+  layer_polygon = pdk.Layer(
+      "PolygonLayer",
+      df_zona,
+      get_polygon="koordinat",
+      get_fill_color="[56, 189, 248, 80]",  # Biru transparan
+      get_line_color="[2, 132, 199, 255]",  # Garis tepi biru tegas
+      get_line_width=80,
+      pickable=True,
+      extruded=False,
+  )
+
+  view_state = pdk.ViewState(
+      latitude=-7.7279, longitude=109.0063, zoom=12.2, pitch=25
+  )
+
+  st.pydeck_chart(
+      pdk.Deck(
+          map_style="mapbox://styles/mapbox/dark-v10",
+          initial_view_state=view_state,
+          layers=[layer_polygon],
+          tooltip={
+              "html": "<b>{zona}</b><br/>{deskripsi}",
+              "style": {"backgroundColor": "#0284C7", "color": "white"},
+          },
+      )
+  )
+
+  st.markdown(
+      '<div id="galeri" class="section-title">🖼️ Peta Jejak Keberdampakan'
+      " (Galeri)</div>",
+      unsafe_allow_html=True,
+  )
+  if st.session_state["daftar_galeri"]:
+    g_cols = st.columns(3)
+    for i, url_img in enumerate(st.session_state["daftar_galeri"]):
+      g_cols[i % 3].image(url_img, use_container_width=True)
+  else:
+    st.info("Belum ada foto galeri yang diunggah.")
 
 # ---------------------------------------------------------
-# MENU 2: EDUKASI & TOOLS (DITAMBAH KALKULATOR GIZI)
+# MENU 2: EDUKASI & TOOLS GIZI (IMT)
 # ---------------------------------------------------------
 elif menu == "Edukasi & Tools Gizi":
-    st.markdown('<div class="section-title">📚 Substansi Edukasi & Tools Interaktif</div>', unsafe_allow_html=True)
-    
-    tab_materi, tab_tools = st.tabs(["📖 Perpustakaan Materi", "⚖️ Kalkulator IMT (Cegah Stunting)"])
-    
-    with tab_materi:
-        st.write("Jelajahi berbagai materi terkait 8 Fungsi Keluarga, PUP, dan pencegahan Triad KRR.")
-        if st.session_state['daftar_materi']:
-            for m in st.session_state['daftar_materi']:
-                with st.expander(f"📌 {m.get('Judul', 'Tanpa Judul')}"):
-                    st.markdown(f"*{m.get('Isi', '')}*")
-                    if m.get("Foto") and m["Foto"] != "None":
-                        list_foto = [url.strip() for url in m["Foto"].split(",") if url.strip() and url.strip() != "None"]
-                        cols_foto = st.columns(min(len(list_foto), 3))
-                        for idx_f, url_f in enumerate(list_foto): cols_foto[idx_f % 3].image(url_f, use_container_width=True)
-        else: st.info("Database materi belum tersedia.")
-        
-    with tab_tools:
-        st.subheader("Kalkulator Indeks Massa Tubuh (IMT) Remaja")
-        st.write("Pencegahan Stunting dimulai dari calon orang tua yang sehat. Yuk, cek status gizimu sekarang!")
-        
-        c_berat, c_tinggi = st.columns(2)
-        berat = c_berat.number_input("Berat Badan (Kg)", min_value=20.0, max_value=150.0, value=50.0)
-        tinggi = c_tinggi.number_input("Tinggi Badan (Cm)", min_value=100.0, max_value=220.0, value=160.0)
-        
-        if st.button("Hitung Status Gizi 🔍", type="primary"):
-            tinggi_m = tinggi / 100
-            imt = berat / (tinggi_m ** 2)
-            st.markdown(f"### Nilai IMT Kamu: **{imt:.1f}**")
-            
-            if imt < 18.5:
-                st.warning("⚠️ **Kurus (Kekurangan Berat Badan)**. Risiko anemia tinggi! Perbanyak makanan bergizi dan minum Tablet Tambah Darah (TTD) untuk remaja putri.")
-            elif 18.5 <= imt <= 24.9:
-                st.success("✅ **Normal (Ideal)**. Bagus sekali! Status gizimu ideal untuk mempersiapkan masa depan yang sehat dan mencegah stunting pada keturunan kelak.")
-            elif 25 <= imt <= 29.9:
-                st.warning("⚠️ **Gemuk (Overweight)**. Jaga pola makan dan rutinkan aktivitas fisik/olahraga minimal 30 menit sehari ya.")
-            else:
-                st.error("🚨 **Obesitas**. Sangat berisiko bagi kesehatan reproduksi dan metabolisme. Segera konsultasikan pola diet sehat ke ahli gizi.")
+  st.markdown(
+      '<div class="section-title">📚 Substansi Edukasi & Tools'
+      " Interaktif</div>",
+      unsafe_allow_html=True,
+  )
+
+  tab_materi, tab_tools = st.tabs(
+      ["📖 Perpustakaan Materi", "⚖️ Kalkulator IMT (Cegah Stunting)"]
+  )
+
+  with tab_materi:
+    st.write(
+        "Jelajahi berbagai materi terkait 8 Fungsi Keluarga, PUP, dan"
+        " pencegahan Triad KRR."
+    )
+    if st.session_state["daftar_materi"]:
+      for m in st.session_state["daftar_materi"]:
+        with st.expander(f"📌 {m.get('Judul', 'Tanpa Judul')}"):
+          st.markdown(f"*{m.get('Isi', '')}*")
+          if m.get("Foto") and m["Foto"] != "None":
+            list_foto = [
+                url.strip()
+                for url in m["Foto"].split(",")
+                if url.strip() and url.strip() != "None"
+            ]
+            cols_foto = st.columns(min(len(list_foto), 3))
+            for idx_f, url_f in enumerate(list_foto):
+              cols_foto[idx_f % 3].image(url_f, use_container_width=True)
+    else:
+      st.info("Database materi belum tersedia.")
+
+  with tab_tools:
+    st.subheader("Kalkulator Indeks Massa Tubuh (IMT) Remaja")
+    st.write(
+        "Pencegahan Stunting dimulai dari calon orang tua yang sehat. Yuk, cek"
+        " status gizimu sekarang!"
+    )
+
+    c_berat, c_tinggi = st.columns(2)
+    berat = c_berat.number_input(
+        "Berat Badan (Kg)", min_value=20.0, max_value=150.0, value=50.0
+    )
+    tinggi = c_tinggi.number_input(
+        "Tinggi Badan (Cm)", min_value=100.0, max_value=220.0, value=160.0
+    )
+
+    if st.button("Hitung Status Gizi 🔍", type="primary"):
+      tinggi_m = tinggi / 100
+      imt = berat / (tinggi_m**2)
+      st.markdown(f"### Nilai IMT Kamu: **{imt:.1f}**")
+
+      if imt < 18.5:
+        st.warning(
+            "⚠️ **Kurus (Kekurangan Berat Badan)**. Risiko anemia tinggi!"
+            " Perbanyak makanan bergizi dan minum Tablet Tambah Darah (TTD)"
+            " untuk remaja putri."
+        )
+      elif 18.5 <= imt <= 24.9:
+        st.success(
+            "✅ **Normal (Ideal)**. Bagus sekali! Status gizimu ideal untuk"
+            " mempersiapkan masa depan yang sehat dan mencegah stunting pada"
+            " keturunan kelak."
+        )
+      elif 25 <= imt <= 29.9:
+        st.warning(
+            "⚠️ **Gemuk (Overweight)**. Jaga pola makan dan rutinkan aktivitas"
+            " fisik/olahraga minimal 30 menit sehari ya."
+        )
+      else:
+        st.error(
+            "🚨 **Obesitas**. Sangat berisiko bagi kesehatan reproduksi dan"
+            " metabolisme. Segera konsultasikan pola diet sehat ke ahli gizi."
+        )
 
 # ---------------------------------------------------------
-# MENU 3: KUIS GENRE (GAMIFIKASI SERTIFIKAT)
+# MENU 3: KUIS GENRE (20 SOAL + SERTIFIKAT)
 # ---------------------------------------------------------
 elif menu == "Kuis GenRe":
-    st.markdown('<div class="section-title">🧩 Kuis Kesiapan Remaja Terencana</div>', unsafe_allow_html=True)
-    st.write("Uji wawasanmu tentang GenRe, Stunting, PUP, dan Perencanaan Kehidupan Berkeluarga!")
-    
-    # DATABASE SOAL SINGKAT (Disingkat 10 soal aja di contoh biar nggak kepanjangan, lu bisa paste 20 soal lu yang tadi ke list ini)
-    data_soal = [
-        {"q": "1. Apa kepanjangan dari GenRe?", "opts": ["A. Generasi Remaja", "B. Generasi Berencana", "C. Gerakan Remaja"], "ans": "B. Generasi Berencana"},
-        {"q": "2. Usia ideal pernikahan menurut program Pendewasaan Usia Perkawinan (PUP) BKKBN adalah?", "opts": ["A. 19 Tahun (P) & 19 Tahun (L)", "B. 21 Tahun (P) & 25 Tahun (L)", "C. 20 Tahun (P) & 20 Tahun (L)"], "ans": "B. 21 Tahun (P) & 25 Tahun (L)"},
-        {"q": "3. Tiga ancaman dasar kesehatan reproduksi remaja (Triad KRR) meliputi apa saja?", "opts": ["A. Seks Bebas, Pernikahan Dini, NAPZA/HIV", "B. Tawuran, Bolos, Merokok", "C. Stunting, Anemia, Obesitas"], "ans": "A. Seks Bebas, Pernikahan Dini, NAPZA/HIV"},
-        {"q": "4. Apa itu Stunting?", "opts": ["A. Penyakit bawaan", "B. Kondisi gagal tumbuh anak akibat kurang gizi kronis", "C. Anak hiperaktif"], "ans": "B. Kondisi gagal tumbuh anak akibat kurang gizi kronis"},
-        {"q": "5. Cara utama mencegah Stunting dari fase remaja putri adalah?", "opts": ["A. Makan fast food", "B. Minum Tablet Tambah Darah (TTD)", "C. Jarang olahraga"], "ans": "B. Minum Tablet Tambah Darah (TTD)"}
-        # (Silakan tambahkan sisa soal lu yang tadi kesini supaya pas 20)
-    ]
+  st.markdown(
+      '<div class="section-title">🧩 Kuis Kesiapan Remaja Terencana (20'
+      " Soal)</div>",
+      unsafe_allow_html=True,
+  )
+  st.write(
+      "Uji wawasanmu tentang GenRe, Stunting, PUP, dan Perencanaan Kehidupan"
+      " Berkeluarga!"
+  )
 
-    # Sesuaikan poin kuis
-    poin_per_soal = 100 / len(data_soal)
+  data_soal = [
+      {
+          "q": "1. Apa kepanjangan dari GenRe?",
+          "opts": [
+              "A. Generasi Remaja",
+              "B. Generasi Berencana",
+              "C. Gerakan Remaja",
+          ],
+          "ans": "B. Generasi Berencana",
+      },
+      {
+          "q": (
+              "2. Usia ideal pernikahan menurut program Pendewasaan Usia"
+              " Perkawinan (PUP) BKKBN adalah?"
+          ),
+          "opts": [
+              "A. 19 Tahun (P) & 19 Tahun (L)",
+              "B. 21 Tahun (P) & 25 Tahun (L)",
+              "C. 20 Tahun (P) & 20 Tahun (L)",
+          ],
+          "ans": "B. 21 Tahun (P) & 25 Tahun (L)",
+      },
+      {
+          "q": (
+              "3. Tiga ancaman dasar kesehatan reproduksi remaja (Triad KRR)"
+              " meliputi apa saja?"
+          ),
+          "opts": [
+              "A. Seks Bebas, Pernikahan Dini, NAPZA/HIV",
+              "B. Tawuran, Bolos, Merokok",
+              "C. Stunting, Anemia, Obesitas",
+          ],
+          "ans": "A. Seks Bebas, Pernikahan Dini, NAPZA/HIV",
+      },
+      {
+          "q": "4. Apa itu Stunting?",
+          "opts": [
+              "A. Penyakit bawaan sejak lahir",
+              "B. Kondisi gagal tumbuh anak akibat kurang gizi kronis",
+              "C. Anak hiperaktif",
+          ],
+          "ans": "B. Kondisi gagal tumbuh anak akibat kurang gizi kronis",
+      },
+      {
+          "q": "5. Salah satu cara utama mencegah Stunting dari fase remaja adalah?",
+          "opts": [
+              "A. Banyak makan fast food",
+              "B. Remaja putri rutin minum TTD (Tablet Tambah Darah)",
+              "C. Mengurangi olahraga",
+          ],
+          "ans": "B. Remaja putri rutin minum TTD (Tablet Tambah Darah)",
+      },
+      {
+          "q": "6. Apa kepanjangan dari PIK-R?",
+          "opts": [
+              "A. Pusat Informasi dan Konseling Remaja",
+              "B. Program Ilmu Keluarga Remaja",
+              "C. Pusat Inovasi Karya Remaja",
+          ],
+          "ans": "A. Pusat Informasi dan Konseling Remaja",
+      },
+      {
+          "q": (
+              "7. Simbol jari 'Salam GenRe' (tiga jari) melambangkan say no to?"
+          ),
+          "opts": [
+              "A. Narkoba, Seks Bebas, Nikah Dini",
+              "B. Korupsi, Kolusi, Nepotisme",
+              "C. Merokok, Minum Keras, Tawuran",
+          ],
+          "ans": "A. Narkoba, Seks Bebas, Nikah Dini",
+      },
+      {
+          "q": "8. Kepanjangan dari BKKBN adalah?",
+          "opts": [
+              "A. Badan Kesejahteraan Keluarga Berencana Nasional",
+              "B. Badan Kependudukan dan Keluarga Berencana Nasional",
+              "C. Biro Kependudukan Keluarga Binaan Nasional",
+          ],
+          "ans": "B. Badan Kependudukan dan Keluarga Berencana Nasional",
+      },
+      {
+          "q": "9. Berapa jumlah Fungsi Keluarga menurut BKKBN?",
+          "opts": ["A. 5 Fungsi", "B. 8 Fungsi", "C. 10 Fungsi"],
+          "ans": "B. 8 Fungsi",
+      },
+      {
+          "q": (
+              "10. Di bawah ini yang BUKAN merupakan bagian dari 8 Fungsi"
+              " Keluarga adalah?"
+          ),
+          "opts": [
+              "A. Fungsi Agama",
+              "B. Fungsi Sosial Budaya",
+              "C. Fungsi Karir/Pekerjaan",
+          ],
+          "ans": "C. Fungsi Karir/Pekerjaan",
+      },
+      {
+          "q": (
+              "11. Salah satu risiko pernikahan dini bagi remaja perempuan"
+              " secara medis adalah?"
+          ),
+          "opts": [
+              "A. Meningkatkan risiko pendarahan dan kanker serviks",
+              "B. Lebih cepat mandiri",
+              "C. Mengurangi beban keluarga asal",
+          ],
+          "ans": "A. Meningkatkan risiko pendarahan dan kanker serviks",
+      },
+      {
+          "q": "12. Apa yang dimaksud dengan 'Bonus Demografi'?",
+          "opts": [
+              (
+                  "A. Masa dimana jumlah penduduk usia produktif lebih besar"
+                  " dibanding non-produktif"
+              ),
+              "B. Jumlah kelahiran bayi yang meningkat drastis",
+              "C. Pemberian bantuan dana untuk penduduk desa",
+          ],
+          "ans": (
+              "A. Masa dimana jumlah penduduk usia produktif lebih besar"
+              " dibanding non-produktif"
+          ),
+      },
+      {
+          "q": "13. HIV/AIDS paling mudah menular pada remaja melalui?",
+          "opts": [
+              "A. Berjabat tangan dan pelukan",
+              "B. Gigitan nyamuk",
+              "C. Penggunaan jarum suntik bekas & seks bebas",
+          ],
+          "ans": "C. Penggunaan jarum suntik bekas & seks bebas",
+      },
+      {
+          "q": (
+              "14. Life Skill yang paling dibutuhkan remaja untuk menolak"
+              " ajakan negatif adalah?"
+          ),
+          "opts": [
+              "A. Kemampuan bernyanyi",
+              "B. Sikap Asertif (berani berkata tidak dengan sopan)",
+              "C. Pandai berbohong",
+          ],
+          "ans": "B. Sikap Asertif (berani berkata tidak dengan sopan)",
+      },
+      {
+          "q": (
+              "15. Masa peralihan dari anak-anak menuju dewasa yang ditandai"
+              " perubahan fisik disebut?"
+          ),
+          "opts": ["A. Masa Balita", "B. Masa Pubertas / Remaja", "C. Masa Lansia"],
+          "ans": "B. Masa Pubertas / Remaja",
+      },
+      {
+          "q": (
+              "16. Mengapa perencanaan finansial sangat penting sebelum"
+              " menikah?"
+          ),
+          "opts": [
+              "A. Agar bisa membeli barang mewah",
+              "B. Untuk menjamin pemenuhan gizi anak dan kestabilan keluarga",
+              "C. Diwajibkan KUA",
+          ],
+          "ans": (
+              "B. Untuk menjamin pemenuhan gizi anak dan kestabilan keluarga"
+          ),
+      },
+      {
+          "q": (
+              "17. Apa peran utama dari seorang Pendidik Sebaya (Peer"
+              " Educator)?"
+          ),
+          "opts": [
+              "A. Memarahi teman yang bersalah",
+              "B. Memberikan informasi dan menjadi role model teman sebaya",
+              "C. Memberikan pinjaman uang",
+          ],
+          "ans": (
+              "B. Memberikan informasi dan menjadi role model teman sebaya"
+          ),
+      },
+      {
+          "q": (
+              "18. Lima transisi kehidupan remaja (Five Life Transitions)"
+              " meliputi salah satunya yaitu?"
+          ),
+          "opts": [
+              "A. Melanjutkan sekolah / pendidikan",
+              "B. Membeli rumah pribadi",
+              "C. Menjadi pejabat desa",
+          ],
+          "ans": "A. Melanjutkan sekolah / pendidikan",
+      },
+      {
+          "q": "19. Dampak buruk NAPZA terhadap masa depan remaja adalah?",
+          "opts": [
+              "A. Merusak sel saraf otak dan memicu tindak kriminal",
+              "B. Membuat tubuh kebal penyakit",
+              "C. Menambah fokus belajar",
+          ],
+          "ans": "A. Merusak sel saraf otak dan memicu tindak kriminal",
+      },
+      {
+          "q": "20. Slogan utama dari program GenRe adalah?",
+          "opts": [
+              "A. Dua Anak Lebih Baik",
+              "B. Saatnya yang Muda yang Berencana",
+              "C. Remaja Masa Gitu",
+          ],
+          "ans": "B. Saatnya yang Muda yang Berencana",
+      },
+  ]
 
-    with st.form("kuis_form"):
-        jawaban_user = []
-        for i, item in enumerate(data_soal):
-            st.markdown(f"**{item['q']}**")
-            pilihan = st.radio(f"Jawaban No {i+1}", item['opts'], index=None, key=f"q_{i}", label_visibility="collapsed")
-            jawaban_user.append(pilihan)
-            st.write("") 
+  with st.form("kuis_form"):
+    jawaban_user = []
+    for i, item in enumerate(data_soal):
+      st.markdown(f"**{item['q']}**")
+      pilihan = st.radio(
+          f"Jawaban No {i+1}",
+          item["opts"],
+          index=None,
+          key=f"q_{i}",
+          label_visibility="collapsed",
+      )
+      jawaban_user.append(pilihan)
+      st.write("")
 
-        if st.form_submit_button("Submit & Hitung Skor 🎯", type="primary", use_container_width=True):
-            if None in jawaban_user:
-                st.error("⚠️ Hei bre, masih ada soal yang belum diisi tuh. Cek lagi ya!")
-            else:
-                skor_akhir = 0
-                for idx, ans in enumerate(jawaban_user):
-                    if ans == data_soal[idx]["ans"]:
-                        skor_akhir += poin_per_soal
-                
-                skor_akhir = int(skor_akhir)
-                st.markdown(f'<div class="section-title" style="color: #10B981; font-size: 3rem;">🎉 SKOR KAMU: {skor_akhir} / 100</div>', unsafe_allow_html=True)
-                
-                if skor_akhir >= 80: 
-                    st.balloons()
-                    # FITUR BARU: SERTIFIKAT DIGITAL
-                    st.markdown(f"""
-                        <div class="sertifikat">
-                            <h2 style="color:white; margin:0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">🏆 SERTIFIKAT DUTA DIGITAL 🏆</h2>
-                            <p style="color:white; font-size:1.2rem; margin-top:10px;">Diberikan Kepada: <b>Pengunjung Anonim</b></p>
-                            <p style="color:white; font-size:1rem;">Telah berhasil meraih predikat <b>SANGAT BAIK (Skor {skor_akhir})</b><br>dalam pemahaman Substansi GenRe dan Perencanaan Masa Depan.</p>
-                            <hr style="border-color:rgba(255,255,255,0.5);">
-                            <i>Silakan Screenshot sertifikat ini sebagai bukti kesiapanmu!</i>
-                        </div>
-                    """, unsafe_allow_html=True)
-                elif skor_akhir >= 50: 
-                    st.warning("👍 BAGUS! Tapi masih perlu banyak baca materi di menu Substansi ya.")
-                else: 
-                    st.error("💪 JANGAN MENYERAH! Yuk mulai sadar dan pahami materi GenRe demi masa depanmu!")
+    if st.form_submit_button(
+        "Submit & Hitung Skor 🎯", type="primary", use_container_width=True
+    ):
+      if None in jawaban_user:
+        st.error("⚠️ Masih ada soal yang belum diisi tuh. Cek lagi ya!")
+      else:
+        skor_akhir = 0
+        for idx, ans in enumerate(jawaban_user):
+          if ans == data_soal[idx]["ans"]:
+            skor_akhir += 5
+
+        st.markdown(
+            '<div class="section-title" style="color: #10B981; font-size:'
+            f' 3rem;">🎉 SKOR KAMU: {skor_akhir} / 100</div>',
+            unsafe_allow_html=True,
+        )
+
+        if skor_akhir >= 80:
+          st.balloons()
+          st.markdown(
+              f"""
+                <div class="sertifikat">
+                    <h2 style="color:white; margin:0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">🏆 SERTIFIKAT DUTA DIGITAL GenRe 🏆</h2>
+                    <p style="color:white; font-size:1.2rem; margin-top:10px;">Diberikan Kepada: <b>Pengunjung Terencana</b></p>
+                    <p style="color:white; font-size:1rem;">Telah berhasil meraih predikat <b>SANGAT BAIK (Skor {skor_akhir})</b><br>dalam pemahaman Substansi GenRe dan Perencanaan Masa Depan.</p>
+                    <hr style="border-color:rgba(255,255,255,0.5);">
+                    <i>Silakan Screenshot sertifikat ini sebagai bukti kesiapanmu!</i>
+                </div>
+            """,
+              unsafe_allow_html=True,
+          )
+        elif skor_akhir >= 50:
+          st.warning(
+              "👍 BAGUS! Tapi masih perlu banyak baca materi di menu Edukasi ya."
+          )
+        else:
+          st.error(
+              "💪 JANGAN MENYERAH! Yuk mulai sadar dan pahami materi GenRe demi"
+              " masa depanmu!"
+          )
 
 # ---------------------------------------------------------
-# MENU 4 & 5 & 6 (RUANG CERITA, KRITIK, ADMIN PANEL)
+# MENU 4: RUANG CERITA (ANONIM)
 # ---------------------------------------------------------
-# (SAMA PERSIS DENGAN KODE LU SEBELUMNYA)
 elif menu == "Ruang Cerita (Anonim)":
-    st.markdown('<div class="section-title">💬 Ruang Cerita Anonim</div>', unsafe_allow_html=True)
-    col_info, col_form = st.columns([1, 1], gap="large")
-    with col_info:
-        if os.path.exists("genre_juara1.jpg"): st.image("genre_juara1.jpg", use_container_width=True)
-        st.write("Ruang ini adalah wadah aman dan rahasia untukmu berbagi cerita. Kami siap mendengar.")
-    with col_form:
-        daftar_cerita = fetch_api_data(API_URL_CERITA)
-        with st.form("cerita_form", clear_on_submit=True):
-            user_input = st.text_area("Tuliskan cerita/curhatan kamu di sini (100% Anonim)...", height=120)
-            if st.form_submit_button("Kirim Cerita 💌", type="primary", use_container_width=True):
-                if user_input.strip():
-                    daftar_cerita.append({"Waktu": datetime.now().strftime("%d/%m/%Y %H:%M"), "Cerita": user_input, "Respon Admin": ""})
-                    if save_api_data(API_URL_CERITA, daftar_cerita):
-                        st.success("Cerita kamu berhasil terkirim!")
-                        st.rerun()
-    st.write("---")
-    st.subheader("📜 Jejak Cerita & Tanggapan Admin")
-    cerita_tampil = fetch_api_data(API_URL_CERITA)
-    if not cerita_tampil: st.info("Belum ada cerita masuk.")
-    else:
-        for item in reversed(cerita_tampil):
-            st.markdown(f'<div class="story-card"><b>👤 Anonim</b> <span style="font-size:0.8rem;">({item.get("Waktu", "-")})</span><br>{item.get("Cerita", "")}</div>', unsafe_allow_html=True)
-            if item.get("Respon Admin"):
-                st.markdown(f'<div class="admin-reply-card"><b>👑 Tanggapan Admin:</b><br>{item.get("Respon Admin")}</div>', unsafe_allow_html=True)
+  st.markdown(
+      '<div class="section-title">💬 Ruang Cerita Anonim</div>',
+      unsafe_allow_html=True,
+  )
+  col_info, col_form = st.columns([1, 1], gap="large")
+  with col_info:
+    if os.path.exists("genre_juara1.jpg"):
+      st.image("genre_juara1.jpg", use_container_width=True)
+    st.write(
+        "Ruang ini adalah wadah aman dan rahasia untukmu berbagi cerita. Kami"
+        " siap mendengar."
+    )
 
-elif menu == "Kritik & Saran": 
-    st.markdown('<div class="section-title">📥 Layanan Pengaduan & Konseling</div>', unsafe_allow_html=True)
-    c1, c2 = st.columns(2, gap="large")
-    with c1:
-        st.subheader("Form Masukan & Evaluasi")
-        daftar_kritik = fetch_api_data(API_URL_KRITIK)
-        with st.form("kritik_form", clear_on_submit=True):
-            topik = st.selectbox("Pilih Topik", ["Pelayanan/Konseling", "Konten Materi", "Tampilan Web", "Program Kerja", "Lainnya"])
-            isi_kritik = st.text_area("Tulis kritik & saran kamu...", height=120)
-            if st.form_submit_button("Kirim Masukan 🚀", type="primary", use_container_width=True):
-                if isi_kritik.strip():
-                    daftar_kritik.append({"Waktu": datetime.now().strftime("%d/%m/%Y %H:%M"), "Topik": topik, "Isi Kritik": isi_kritik})
-                    save_api_data(API_URL_KRITIK, daftar_kritik)
-                    st.success("Terima kasih! Masukan berhasil dikirim.")
-    with c2:
-        st.subheader("Konseling Privat Direct")
-        if os.path.exists("genre_juara1.jpg"): st.image("genre_juara1.jpg", use_container_width=True)
-        st.link_button("Hubungi Admin via WhatsApp 💬", "https://wa.me/qr/RTCENRAXQVZFM1", type="primary", use_container_width=True)
+  with col_form:
+    daftar_cerita = fetch_api_data(API_URL_CERITA)
+    with st.form("cerita_form", clear_on_submit=True):
+      user_input = st.text_area(
+          "Tuliskan cerita/curhatan kamu di sini (100% Anonim)...", height=120
+      )
+      if st.form_submit_button(
+          "Kirim Cerita 💌", type="primary", use_container_width=True
+      ):
+        if user_input.strip():
+          daftar_cerita.append({
+              "Waktu": datetime.now().strftime("%d/%m/%Y %H:%M"),
+              "Cerita": user_input,
+              "Respon Admin": "",
+          })
+          if save_api_data(API_URL_CERITA, daftar_cerita):
+            st.success("Cerita kamu berhasil terkirim!")
+            st.rerun()
 
+  st.write("---")
+  st.subheader("📜 Jejak Cerita & Tanggapan Admin")
+  cerita_tampil = fetch_api_data(API_URL_CERITA)
+  if not cerita_tampil:
+    st.info("Belum ada cerita masuk.")
+  else:
+    for item in reversed(cerita_tampil):
+      st.markdown(
+          '<div class="story-card"><b>👤 Anonim</b> <span'
+          f' style="font-size:0.8rem;">({item.get("Waktu", "-")})</span><br>{item.get("Cerita", "")}</div>',
+          unsafe_allow_html=True,
+      )
+      if item.get("Respon Admin"):
+        st.markdown(
+            '<div class="admin-reply-card"><b>👑 Tanggapan'
+            f' Admin:</b><br>{item.get("Respon Admin")}</div>',
+            unsafe_allow_html=True,
+        )
+
+# ---------------------------------------------------------
+# MENU 5: KRITIK & SARAN
+# ---------------------------------------------------------
+elif menu == "Kritik & Saran":
+  st.markdown(
+      '<div class="section-title">📥 Layanan Pengaduan & Konseling</div>',
+      unsafe_allow_html=True,
+  )
+  c1, c2 = st.columns(2, gap="large")
+  with c1:
+    st.subheader("Form Masukan & Evaluasi")
+    daftar_kritik = fetch_api_data(API_URL_KRITIK)
+    with st.form("kritik_form", clear_on_submit=True):
+      topik = st.selectbox(
+          "Pilih Topik",
+          [
+              "Pelayanan/Konseling",
+              "Konten Materi",
+              "Tampilan Web",
+              "Program Kerja",
+              "Lainnya",
+          ],
+      )
+      isi_kritik = st.text_area("Tulis kritik & saran kamu...", height=120)
+      if st.form_submit_button(
+          "Kirim Masukan 🚀", type="primary", use_container_width=True
+      ):
+        if isi_kritik.strip():
+          daftar_kritik.append({
+              "Waktu": datetime.now().strftime("%d/%m/%Y %H:%M"),
+              "Topik": topik,
+              "Isi Kritik": isi_kritik,
+          })
+          save_api_data(API_URL_KRITIK, daftar_kritik)
+          st.success("Terima kasih! Masukan berhasil dikirim.")
+  with c2:
+    st.subheader("Konseling Privat Direct")
+    if os.path.exists("genre_juara1.jpg"):
+      st.image("genre_juara1.jpg", use_container_width=True)
+    st.link_button(
+        "Hubungi Admin via WhatsApp 💬",
+        "https://wa.me/qr/RTCENRAXQVZFM1",
+        type="primary",
+        use_container_width=True,
+    )
+
+# ---------------------------------------------------------
+# MENU 6: ADMIN PANEL
+# ---------------------------------------------------------
 elif menu == "Admin Panel":
-    st.markdown('<div class="section-title">⚙️ Control Panel Admin</div>', unsafe_allow_html=True)
-    c_lock, _ = st.columns([1, 2])
-    admin_pass = c_lock.text_input("Passcode Admin", type="password")
-        
-    if admin_pass == "chandikia":
-        st.success("🛠️ Akses Terbuka")
-        tab1, tab2, tab3, tab4, tab5 = st.tabs(["💬 Balas Cerita", "📚 Materi", "🖼️ Galeri", "📥 Kritik", "📊 Data"])
-        
-        with tab1:
-            list_cerita = fetch_api_data(API_URL_CERITA)
-            if list_cerita:
-                opsi = [f"[{c.get('Waktu')}] {c.get('Cerita')[:40]}..." for c in list_cerita]
-                idx = st.selectbox("Pilih cerita:", range(len(opsi)), format_func=lambda x: opsi[x])
-                st.info(list_cerita[idx].get('Cerita'))
-                balasan = st.text_area("Respon Admin:", value=list_cerita[idx].get("Respon Admin", ""))
-                if st.button("Simpan Respon ✉️"):
-                    list_cerita[idx]["Respon Admin"] = balasan
-                    save_api_data(API_URL_CERITA, list_cerita); st.success("Disimpan!"); st.rerun()
+  st.markdown(
+      '<div class="section-title">⚙️ Control Panel Admin</div>',
+      unsafe_allow_html=True,
+  )
+  c_lock, _ = st.columns([1, 2])
+  admin_pass = c_lock.text_input("Passcode Admin", type="password")
 
-        with tab2:
-            aksi = st.radio("Aksi:", ["Tambah", "Edit/Hapus"], horizontal=True)
-            if aksi == "Tambah":
-                j = st.text_input("Judul"); i = st.text_area("Isi")
-                if st.button("Publish 🚀") and j and i:
-                    st.session_state['daftar_materi'].append({"Judul": j, "Isi": i, "Foto": "None"})
-                    save_api_data(API_URL_MATERI, st.session_state['daftar_materi']); st.rerun()
+  if admin_pass == "chandikia":
+    st.success("🛠️ Akses Terbuka")
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        ["💬 Balas Cerita", "📚 Materi", "🖼️ Galeri", "📥 Kritik", "📊 Data"]
+    )
 
-        with tab3:
-            l = st.text_input("URL Gambar")
-            if st.button("Tambah 🖼️") and l:
-                st.session_state['daftar_galeri'].append(l)
-                save_api_data(API_URL_GALERI, st.session_state['daftar_galeri']); st.rerun()
+    with tab1:
+      list_cerita = fetch_api_data(API_URL_CERITA)
+      if list_cerita:
+        opsi = [
+            f"[{c.get('Waktu')}] {c.get('Cerita')[:40]}..." for c in list_cerita
+        ]
+        idx = st.selectbox(
+            "Pilih cerita:", range(len(opsi)), format_func=lambda x: opsi[x]
+        )
+        st.info(list_cerita[idx].get("Cerita"))
+        balasan = st.text_area(
+            "Respon Admin:", value=list_cerita[idx].get("Respon Admin", "")
+        )
+        if st.button("Simpan Respon ✉️"):
+          list_cerita[idx]["Respon Admin"] = balasan
+          save_api_data(API_URL_CERITA, list_cerita)
+          st.success("Disimpan!")
+          st.rerun()
 
-        with tab4:
-            data_k = fetch_api_data(API_URL_KRITIK)
-            if data_k: st.dataframe(data_k, use_container_width=True)
-            else: st.info("Belum ada data.")
+    with tab2:
+      aksi = st.radio("Aksi:", ["Tambah", "Edit/Hapus"], horizontal=True)
+      if aksi == "Tambah":
+        j = st.text_input("Judul")
+        i = st.text_area("Isi")
+        if st.button("Publish 🚀") and j and i:
+          st.session_state["daftar_materi"].append(
+              {"Judul": j, "Isi": i, "Foto": "None"}
+          )
+          save_api_data(API_URL_MATERI, st.session_state["daftar_materi"])
+          st.success("Materi berhasil ditambahkan!")
+          st.rerun()
 
-        with tab5:
-            st.subheader("📊 Statistik Aspirasi")
-            data_a = fetch_api_data(API_URL_KRITIK)
-            if data_a:
-                df = pd.DataFrame(data_a)
-                if 'Topik' in df.columns: st.bar_chart(df['Topik'].value_counts())
-            else:
-                mock = pd.DataFrame({"Kategori": ["Pelayanan", "Materi", "Web", "Program"], "Jumlah": [12, 8, 5, 15]})
-                st.bar_chart(mock.set_index("Kategori"))
-    elif admin_pass: st.error("Passcode Salah!")
+    with tab3:
+      l = st.text_input("URL Gambar")
+      if st.button("Tambah 🖼️") and l:
+        st.session_state["daftar_galeri"].append(l)
+        save_api_data(API_URL_GALERI, st.session_state["daftar_galeri"])
+        st.success("Gambar berhasil ditambahkan!")
+        st.rerun()
 
-st.markdown("<br><hr style='border-color:rgba(255,255,255,0.1);'><p style='text-align: center; color: #94A3B8;'>© 2026 Merpati Putih — Melangitkan Harapan, Membumikan Kebermanfaatan.</p>", unsafe_allow_html=True)
+    with tab4:
+      data_k = fetch_api_data(API_URL_KRITIK)
+      if data_k:
+        st.dataframe(data_k, use_container_width=True)
+      else:
+        st.info("Belum ada data kritik & saran.")
+
+    with tab5:
+      st.subheader("📊 Statistik Aspirasi")
+      data_a = fetch_api_data(API_URL_KRITIK)
+      if data_a:
+        df = pd.DataFrame(data_a)
+        if "Topik" in df.columns:
+          st.bar_chart(df["Topik"].value_counts())
+      else:
+        mock = pd.DataFrame({
+            "Kategori": ["Pelayanan", "Materi", "Web", "Program"],
+            "Jumlah": [12, 8, 5, 15],
+        })
+        st.bar_chart(mock.set_index("Kategori"))
+
+  elif admin_pass:
+    st.error("Passcode Salah!")
+
+st.markdown(
+    "<br><hr style='border-color:rgba(255,255,255,0.1);'><p style='text-align:"
+    " center; color: #94A3B8;'>© 2026 Merpati Putih — Melangitkan Harapan,"
+    " Membumikan Kebermanfaatan.</p>",
+    unsafe_allow_html=True,
+)
