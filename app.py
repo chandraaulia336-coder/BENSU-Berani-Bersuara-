@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import random
 import pandas as pd
@@ -261,7 +261,7 @@ if menu == "Beranda & Peta":
       )
   )
 
-  # GALERI (100% MURNI DARI API GOOGLE APPS SCRIPT)
+  # GALERI
   st.markdown(
       '<div id="galeri" class="section-title">🖼️ Peta Jejak Keberdampakan'
       " (Galeri)</div>",
@@ -269,7 +269,6 @@ if menu == "Beranda & Peta":
   )
 
   galeri_api = st.session_state.get("daftar_galeri", [])
-
   if isinstance(galeri_api, list) and len(galeri_api) > 0:
     g_cols = st.columns(3)
     for i, url_img in enumerate(galeri_api):
@@ -281,7 +280,7 @@ if menu == "Beranda & Peta":
     st.info("Belum ada foto galeri yang diunggah.")
 
 # ---------------------------------------------------------
-# MENU 2: EDUKASI & TOOLS GIZI + SIAP NIKAH
+# MENU 2: EDUKASI & TOOLS GIZI + KESPRO
 # ---------------------------------------------------------
 elif menu == "Edukasi & Tools Gizi":
   st.markdown(
@@ -290,20 +289,37 @@ elif menu == "Edukasi & Tools Gizi":
       unsafe_allow_html=True,
   )
 
-  tab_materi, tab_tools, tab_piringku, tab_siapnikah = st.tabs([
+  tab_materi, tab_tools, tab_piringku, tab_siapnikah, tab_siklus = st.tabs([
       "📖 Perpustakaan Materi",
       "⚖️ Kalkulator IMT",
-      "🍽️ Panduan & Cek Isi Piringku",
+      "🍽️ Panduan Isi Piringku",
       "💍 Skrining Siap Nikah (BKKBN)",
+      "🗓️ Kalender Siklus & TTD",
   ])
 
+  # TAB 1: MATERI + SEARCH BAR
   with tab_materi:
     st.write(
         "Jelajahi berbagai materi terkait 8 Fungsi Keluarga, PUP, dan"
         " pencegahan Triad KRR."
     )
-    if st.session_state["daftar_materi"]:
-      for m in st.session_state["daftar_materi"]:
+    search_kw = st.text_input(
+        "🔍 Cari Materi Edukasi (misal: Stunting, Anemia, PUP, Narkoba)..."
+    )
+
+    materi_all = st.session_state.get("daftar_materi", [])
+    if search_kw.strip():
+      materi_filtered = [
+          m
+          for m in materi_all
+          if search_kw.lower() in m.get("Judul", "").lower()
+          or search_kw.lower() in m.get("Isi", "").lower()
+      ]
+    else:
+      materi_filtered = materi_all
+
+    if materi_filtered:
+      for m in materi_filtered:
         with st.expander(f"📌 {m.get('Judul', 'Tanpa Judul')}"):
           st.markdown(f"*{m.get('Isi', '')}*")
 
@@ -319,8 +335,9 @@ elif menu == "Edukasi & Tools Gizi":
               for idx_f, url_f in enumerate(list_foto):
                 cols_foto[idx_f % 3].image(url_f, use_container_width=True)
     else:
-      st.info("Database materi belum tersedia.")
+      st.info("Materi yang dicari tidak ditemukan.")
 
+  # TAB 2: KALKULATOR IMT
   with tab_tools:
     st.subheader("Kalkulator Indeks Massa Tubuh (IMT) Remaja")
     st.write(
@@ -364,6 +381,7 @@ elif menu == "Edukasi & Tools Gizi":
             " metabolisme. Segera konsultasikan pola diet sehat ke ahli gizi."
         )
 
+  # TAB 3: ISI PIRINGKU
   with tab_piringku:
     st.subheader("🍽️ Konsep Isi Piringku (Kemenkes RI)")
     st.write(
@@ -401,9 +419,6 @@ elif menu == "Edukasi & Tools Gizi":
 
     st.write("---")
     st.subheader("🧪 Simulasi & Analisis Kelengkapan Piringku")
-    st.write(
-        "Pilih komposisi menu makanmu hari ini untuk dianalisis oleh sistem:"
-    )
 
     col_s1, col_s2 = st.columns(2)
     with col_s1:
@@ -505,13 +520,7 @@ elif menu == "Edukasi & Tools Gizi":
         for c in catatan:
           st.write(f"- {c}")
 
-      if not f_air:
-        st.info(
-            "💡 Jangan lupa minum air putih secukupnya untuk menjaga hidrasi"
-            " tubuh!"
-        )
-
-  # FITUR BARU: SKRINING SIAP NIKAH (ELSIMIL BKKBN)
+  # TAB 4: SKRINING SIAP NIKAH + DOWNLOAD SUMMARY
   with tab_siapnikah:
     st.subheader("💍 Skrining Kesiapan Nikah & Hamil (Standar Elsimil BKKBN)")
     st.write(
@@ -524,7 +533,6 @@ elif menu == "Edukasi & Tools Gizi":
         ["👩 Wanita (Calon Ibu)", "👨 Pria (Calon Ayah)"],
         horizontal=True,
     )
-
     st.write("---")
 
     if "Wanita" in gender:
@@ -542,9 +550,6 @@ elif menu == "Edukasi & Tools Gizi":
         tt_wanita = st.checkbox(
             "💉 Sudah Mendapat Imunisasi Tetanus Toksoid (TT)?", value=True
         )
-        ttd_wanita = st.checkbox(
-            "💊 Rutin Minum Tablet Tambah Darah (TTD)?", value=True
-        )
         fin_wanita = st.checkbox("💰 Ada Perencanaan Finansial & Kerja?", value=True)
         psikolog_wanita = st.checkbox(
             "🧠 Siap Secara Mental / Emosional?", value=True
@@ -554,59 +559,57 @@ elif menu == "Edukasi & Tools Gizi":
         skor_sn = 0
         catatan_sn = []
 
-        # Usia (Min 21)
         if u_wanita >= 21:
           skor_sn += 25
         else:
           catatan_sn.append(
-              f"🚨 **Usia Belum Ideal ({u_wanita} Thn):** Rekomendasi BKKBN"
-              " wanita menikah minimal usia 21 tahun untuk kesiapan organ"
-              " reproduksi dan panggul."
+              f"Usia Belum Ideal ({u_wanita} Thn): Minimal 21 thn untuk wanita."
           )
 
-        # Hb (Min 12)
         if hb_wanita >= 12.0:
           skor_sn += 25
         else:
           catatan_sn.append(
-              f"🩸 **Kadar Hb Rendah ({hb_wanita} g/dL):** Terindikasi Anemia!"
-              " Berisiko tinggi melahirkan anak stunting dan pendarahan saat"
-              " melahirkan. Segera konsumsi Tablet Tambah Darah (TTD) & makanan"
-              " tinggi zat besi."
+              f"Hb Rendah ({hb_wanita} g/dL): Terindikasi Anemia."
           )
 
-        # LILA (Min 23.5)
         if lila_wanita >= 23.5:
           skor_sn += 25
         else:
           catatan_sn.append(
-              f"📏 **LILA Kurang dari 23.5 cm ({lila_wanita} cm):** Berisiko"
-              " KEK (Kekurangan Energi Kronis). Perbaiki gizi sebelum hamil"
-              " agar melahirkan bayi berat normal."
+              f"LILA Kurang dari 23.5 cm ({lila_wanita} cm): Risiko KEK."
           )
 
-        # Imunisasi & Kesiapan Mental
         if tt_wanita and fin_wanita and psikolog_wanita:
           skor_sn += 25
         else:
           catatan_sn.append(
-              "⚠️ Lengkapi Imunisasi TT di Puskesmas serta matangkan diskusi"
-              " finansial & mental bersama pasangan."
+              "Lengkapi Imunisasi TT dan kesiapan mental/finansial."
           )
 
-        st.markdown(
-            f"### Indeks Kesiapan Nikah: **{skor_sn}%**"
-        )
+        st.markdown(f"### Indeks Kesiapan Nikah: **{skor_sn}%**")
         if skor_sn == 100:
-          st.success(
-              "🎉 **SANGAT SIAP NIKAH & HAMIL!** Fisik dan gizi kamu ideal"
-              " untuk melahirkan generasi penerus yang sehat dan bebas"
-              " Stunting."
-          )
+          st.success("🎉 **SANGAT SIAP NIKAH & HAMIL!** Fisik dan gizi ideal.")
         else:
-          st.warning("📋 **Rekomendasi Intervensi Kesehatan:**")
+          st.warning("📋 **Catatan Evaluasi:**")
           for c in catatan_sn:
             st.write(f"- {c}")
+
+        # Download Report Summary
+        txt_summary = (
+            f"=== LAPORAN SKRINING SIAP NIKAH MERPATI PUTIH ===\n"
+            f"Tanggal: {datetime.now().strftime('%d/%m/%Y')}\n"
+            f"Kategori: Calon Pengantin Wanita\n"
+            f"Usia: {u_wanita} Thn | Hb: {hb_wanita} g/dL | LILA: {lila_wanita} cm\n"
+            f"Skor Kesiapan: {skor_sn}%\n\n"
+            f"Evaluasi:\n" + "\n".join([f"- {item}" for item in catatan_sn])
+        )
+        st.download_button(
+            label="📄 Download Hasil Skrining (TXT)",
+            data=txt_summary,
+            file_name=f"skrining_catin_wanita_{datetime.now().strftime('%Y%m%d')}.txt",
+            mime="text/plain",
+        )
 
     else:  # Pria
       col_m1, col_m2 = st.columns(2)
@@ -619,15 +622,11 @@ elif menu == "Edukasi & Tools Gizi":
 
       with col_m2:
         sehat_pria = st.checkbox(
-            "🩺 Bebas Penyakit Menular / TBC / NAPZA (Pemeriksaan Puskesmas)?",
-            value=True,
+            "🩺 Bebas Penyakit Menular / TBC / NAPZA?", value=True
         )
-        fin_pria = st.checkbox(
-            "💼 Memiliki Penghasilan / Kesiapan Finansial Mampu Menafkahi?",
-            value=True,
-        )
+        fin_pria = st.checkbox("💼 Memiliki Penghasilan Mandiri?", value=True)
         psikolog_pria = st.checkbox(
-            "👨‍👩‍👧 Siap Menjadi Kepala Keluarga & Mendampingi Istri?", value=True
+            "👨‍👩‍👧 Siap Menjadi Kepala Keluarga?", value=True
         )
 
       if st.button("Cek Hasil Skrining Pria 👨‍⚕️", type="primary"):
@@ -638,52 +637,100 @@ elif menu == "Edukasi & Tools Gizi":
           skor_pria += 30
         else:
           catatan_pria.append(
-              f"🚨 **Usia Belum Ideal ({u_pria} Thn):** Usia ideal pria menurut"
-              " BKKBN adalah 25 tahun (matang secara ekonomi dan emosional)."
+              f"Usia Belum Ideal ({u_pria} Thn): Minimal 25 thn untuk pria."
           )
 
         if rokok_pria == "Tidak Merokok":
           skor_pria += 30
         elif rokok_pria == "Perokok Pasif":
           skor_pria += 20
-          catatan_pria.append(
-              "🚬 **Perokok Pasif:** Hindari paparan asap rokok lingkungan"
-              " sekitar."
-          )
         else:
           catatan_pria.append(
-              "🚭 **Perokok Aktif:** Asap rokok merusak kualitas sperma dan"
-              " menjadi racun berbahaya bagi janin/calon ibu hamil di rumah."
-              " Disarankan berhenti merokok!"
+              "Perokok Aktif: Asap rokok merusak kualitas sperma & kesehatan"
+              " janin."
           )
 
         if sehat_pria:
           skor_pria += 20
         else:
-          catatan_pria.append(
-              "🏥 Segera lakukan pemeriksaan kesehatan menyeluruh di Puskesmas"
-              " terdekat."
-          )
+          catatan_pria.append("Lakukan cek kesehatan rutin di Puskesmas.")
 
         if fin_pria and psikolog_pria:
           skor_pria += 20
         else:
-          catatan_pria.append(
-              "💰 Matangkan kesiapan finansial dan mental kepemimpinan keluarga."
-          )
+          catatan_pria.append("Matangkan kesiapan finansial dan psikologis.")
 
-        st.markdown(
-            f"### Indeks Kesiapan Nikah: **{skor_pria}%**"
-        )
+        st.markdown(f"### Indeks Kesiapan Nikah: **{skor_pria}%**")
         if skor_pria >= 90:
-          st.success(
-              "🎉 **SANGAT SIAP NIKAH!** Kamu siap menjadi kepala keluarga"
-              " yang bertanggung jawab dan menjaga kesehatan calon ibu & anak."
-          )
+          st.success("🎉 **SANGAT SIAP NIKAH!** Siap menjadi kepala keluarga.")
         else:
-          st.warning("📋 **Rekomendasi Persiapan:**")
+          st.warning("📋 **Catatan Evaluasi:**")
           for c in catatan_pria:
             st.write(f"- {c}")
+
+        txt_pria = (
+            f"=== LAPORAN SKRINING SIAP NIKAH MERPATI PUTIH ===\n"
+            f"Tanggal: {datetime.now().strftime('%d/%m/%Y')}\n"
+            f"Kategori: Calon Pengantin Pria\n"
+            f"Usia: {u_pria} Thn | Merokok: {rokok_pria}\n"
+            f"Skor Kesiapan: {skor_pria}%\n\n"
+            f"Evaluasi:\n" + "\n".join([f"- {item}" for item in catatan_pria])
+        )
+        st.download_button(
+            label="📄 Download Hasil Skrining (TXT)",
+            data=txt_pria,
+            file_name=f"skrining_catin_pria_{datetime.now().strftime('%Y%m%d')}.txt",
+            mime="text/plain",
+        )
+
+  # TAB 5: KALENDER SIKLUS & PENGINGAT TTD
+  with tab_siklus:
+    st.subheader(
+        "🗓️ Kalkulator Siklus Menstruasi, Masa Subur & Pengingat TTD"
+    )
+    st.write(
+        "Pencegahan Anemia pada remaja putri sangat vital untuk mencegah"
+        " stunting pada generasi masa depan."
+    )
+
+    col_k1, col_k2 = st.columns(2)
+    with col_k1:
+      hpht = st.date_input(
+          "Hari Pertama Haid Terakhir (HPHT)", value=datetime.now()
+      )
+      panjang_siklus = st.number_input(
+          "Rata-rata Panjang Siklus Haid (Hari)", 21, 40, 28
+      )
+    with col_k2:
+      lama_haid = st.number_input(
+          "Rata-rata Lama Menstruasi (Hari)", 3, 14, 7
+      )
+
+    if st.button("Hitung Siklus & Masa Subur 🌸", type="primary"):
+      haid_berikutnya = hpht + timedelta(days=int(panjang_siklus))
+      ovulasi = hpht + timedelta(days=int(panjang_siklus - 14))
+      subur_awal = ovulasi - timedelta(days=2)
+      subur_akhir = ovulasi + timedelta(days=2)
+
+      m_s1, m_s2 = st.columns(2)
+      m_s1.metric("Est. Haid Berikutnya", haid_berikutnya.strftime("%d %B %Y"))
+      m_s2.metric("Est. Puncak Ovulasi", ovulasi.strftime("%d %B %Y"))
+
+      st.info(
+          f"💡 **Masa Subur Utama:** {subur_awal.strftime('%d %B')} s/d"
+          f" {subur_akhir.strftime('%d %B %Y')}"
+      )
+
+      st.markdown("---")
+      st.subheader("💊 Panduan Minum Tablet Tambah Darah (TTD)")
+      st.warning(
+          "🩸 **Saat Menstruasi:** Minum **1 Tablet Tambah Darah (TTD) SETIAP"
+          " HARI** selama masa menstruasi berlangsung.\n\n🌿 **Hari Biasa"
+          " (Tidak Haid):** Minum **1 Tablet Tambah Darah 1 MINGGU SEKALI**"
+          " secara teratur.\n\n💡 *Tips:* Minum TTD dengan air putih/jus buah"
+          " (mengandung Vitamin C). Hindari minum TTD bersaamaan dengan"
+          " kopi/teh karena dapat menghambat penyerapan zat besi."
+      )
 
 # ---------------------------------------------------------
 # MENU 3: KUIS GENRE (20 SOAL + SERTIFIKAT)
@@ -693,10 +740,6 @@ elif menu == "Kuis GenRe":
       '<div class="section-title">🧩 Kuis Kesiapan Remaja Terencana (20'
       " Soal)</div>",
       unsafe_allow_html=True,
-  )
-  st.write(
-      "Uji wawasanmu tentang GenRe, Stunting, PUP, dan Perencanaan Kehidupan"
-      " Berkeluarga!"
   )
 
   data_soal = [
@@ -933,11 +976,11 @@ elif menu == "Kuis GenRe":
       if None in jawaban_user:
         st.error("⚠️ Masih ada soal yang belum diisi tuh. Cek lagi ya!")
       else:
-        skor_akhir = 0
-        for idx, ans in enumerate(jawaban_user):
-          if ans == data_soal[idx]["ans"]:
-            skor_akhir += 5
-
+        skor_akhir = sum(
+            5
+            for idx, ans in enumerate(jawaban_user)
+            if ans == data_soal[idx]["ans"]
+        )
         st.markdown(
             '<div class="section-title" style="color: #10B981; font-size:'
             f' 3rem;">🎉 SKOR KAMU: {skor_akhir} / 100</div>',
@@ -949,23 +992,12 @@ elif menu == "Kuis GenRe":
           st.markdown(
               f"""
                 <div class="sertifikat">
-                    <h2 style="color:white; margin:0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">🏆 SERTIFIKAT DUTA DIGITAL GenRe 🏆</h2>
+                    <h2 style="color:white; margin:0;">🏆 SERTIFIKAT DUTA DIGITAL GenRe 🏆</h2>
                     <p style="color:white; font-size:1.2rem; margin-top:10px;">Diberikan Kepada: <b>Pengunjung Terencana</b></p>
-                    <p style="color:white; font-size:1rem;">Telah berhasil meraih predikat <b>SANGAT BAIK (Skor {skor_akhir})</b><br>dalam pemahaman Substansi GenRe dan Perencanaan Masa Depan.</p>
-                    <hr style="border-color:rgba(255,255,255,0.5);">
-                    <i>Silakan Screenshot sertifikat ini sebagai bukti kesiapanmu!</i>
+                    <p style="color:white; font-size:1rem;">Telah berhasil meraih predikat <b>SANGAT BAIK (Skor {skor_akhir})</b><br>dalam pemahaman Substansi GenRe.</p>
                 </div>
             """,
               unsafe_allow_html=True,
-          )
-        elif skor_akhir >= 50:
-          st.warning(
-              "👍 BAGUS! Tapi masih perlu banyak baca materi di menu Edukasi ya."
-          )
-        else:
-          st.error(
-              "💪 JANGAN MENYERAH! Yuk mulai sadar dan pahami materi GenRe demi"
-              " masa depanmu!"
           )
 
 # ---------------------------------------------------------
@@ -1070,7 +1102,7 @@ elif menu == "Kritik & Saran":
     )
 
 # ---------------------------------------------------------
-# MENU 6: ADMIN PANEL
+# MENU 6: ADMIN PANEL (WITH CSV DOWNLOADS)
 # ---------------------------------------------------------
 elif menu == "Admin Panel":
   st.markdown(
@@ -1089,6 +1121,15 @@ elif menu == "Admin Panel":
     with tab1:
       list_cerita = fetch_api_data(API_URL_CERITA)
       if list_cerita:
+        df_cerita = pd.DataFrame(list_cerita)
+        st.download_button(
+            label="📥 Export Data Cerita ke CSV",
+            data=df_cerita.to_csv(index=False).encode("utf-8"),
+            file_name="data_cerita_anonim.csv",
+            mime="text/csv",
+        )
+        st.write("---")
+
         opsi = [
             f"[{c.get('Waktu')}] {c.get('Cerita')[:40]}..." for c in list_cerita
         ]
@@ -1133,7 +1174,14 @@ elif menu == "Admin Panel":
     with tab4:
       data_k = fetch_api_data(API_URL_KRITIK)
       if data_k:
-        st.dataframe(data_k, use_container_width=True)
+        df_k = pd.DataFrame(data_k)
+        st.dataframe(df_k, use_container_width=True)
+        st.download_button(
+            label="📥 Export Data Kritik & Saran ke CSV",
+            data=df_k.to_csv(index=False).encode("utf-8"),
+            file_name="data_kritik_saran.csv",
+            mime="text/csv",
+        )
       else:
         st.info("Belum ada data kritik & saran.")
 
