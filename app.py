@@ -161,11 +161,11 @@ if menu == "Beranda & Galeri":
     st.markdown('<div class="section-title">📅 Agenda & Timeline Program Kerja</div>', unsafe_allow_html=True)
     col_a1, col_a2, col_a3 = st.columns(3)
     with col_a1:
-        st.info("🎯 **Sosialisasi GenRe Goes to School**\n\n*Target:* SMA/SMK Cilacap\n\n*Status:* 🔥 On Going")
+        st.info("🎯 **Sosialisasi GenRe Goes to School**\n\n*Target:* SMA/SMK Cilacap\n\n*Status:* 🔥 Done")
     with col_a2:
         st.success("💬 **Pojok Konseling Sebaya**\n\n*Target:* Remaja Desa/Kecamatan\n\n*Status:* 🟢 Setiap Akhir Pekan")
     with col_a3:
-        st.warning("🏆 **Jambore Remaja Terencana**\n\n*Target:* Seluruh Kader PIK-R\n\n*Status:* ⏳ Merekrut Peserta")
+        st.warning("🏆 **Open Rekruitment Forgen Nawasena**\n\n*Target:* Seluruh Reamaja Terbaik di Cilacap Selatan\n\n*Status:* ⏳ Segera")
 
     st.markdown('<div id="galeri" class="section-title">🖼️ Peta Jejak Keberdampakan (Galeri)</div>', unsafe_allow_html=True)
     if st.session_state['daftar_galeri']:
