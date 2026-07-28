@@ -77,7 +77,7 @@ def get_base64_bg(image_path):
     with open(image_path, "rb") as img_file:
       encoded = base64.b64encode(img_file.read()).decode()
     return f"data:image/webp;base64,{encoded}"
-  return "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000"
+  return ""
 
 
 bg_image = get_base64_bg("25117787.webp")
@@ -196,11 +196,6 @@ if menu == "Beranda & Peta":
   with h_col2:
     if os.path.exists("genre_juara1.jpg"):
       st.image("genre_juara1.jpg", use_container_width=True)
-    else:
-      st.image(
-          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000",
-          use_container_width=True,
-      )
 
   st.markdown(
       '<div class="section-title">📊 Merpati Putih Dalam Angka</div>',
@@ -266,7 +261,7 @@ if menu == "Beranda & Peta":
       )
   )
 
-  # GALERI (GABUNGAN DATA API GOOGLE APPS SCRIPT + FALLBACK DEFAULTS)
+  # GALERI (100% MURNI DARI API GOOGLE APPS SCRIPT)
   st.markdown(
       '<div id="galeri" class="section-title">🖼️ Peta Jejak Keberdampakan'
       " (Galeri)</div>",
@@ -274,23 +269,10 @@ if menu == "Beranda & Peta":
   )
 
   galeri_api = st.session_state.get("daftar_galeri", [])
-  foto_default = [
-      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000",
-      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1000",
-      "https://images.unsplash.com/photo-1526976663112-91c2e31ce00b?q=80&w=1000",
-  ]
 
-  semua_galeri = []
   if isinstance(galeri_api, list) and len(galeri_api) > 0:
-    semua_galeri.extend(galeri_api)
-
-  for img in foto_default:
-    if img not in semua_galeri:
-      semua_galeri.append(img)
-
-  if semua_galeri:
     g_cols = st.columns(3)
-    for i, url_img in enumerate(semua_galeri):
+    for i, url_img in enumerate(galeri_api):
       try:
         g_cols[i % 3].image(url_img, use_container_width=True)
       except Exception:
