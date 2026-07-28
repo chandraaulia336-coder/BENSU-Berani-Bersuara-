@@ -123,12 +123,11 @@ st.markdown(f"""
     [data-testid="stMetricValue"] {{ color: #38BDF8 !important; font-size: 2.3rem !important; font-weight: 800 !important; }}
     div.stMetric {{ background: rgba(30, 41, 59, 0.65) !important; padding: 20px 15px !important; border-radius: 16px !important; border: 1px solid rgba(255, 255, 255, 0.12) !important; text-align: center !important; }}
     div[data-testid="stRadio"] > label {{ display: none; }}
-    div[data-testid="stRadio"] > div {{ background-color: rgba(30, 41, 59, 0.7); padding: 8px; border-radius: 14px; gap: 8px; border: 1px solid rgba(255, 255, 255, 0.12); }}
+    div[data-testid="stRadio"] > div {{ background-color: rgba(30, 41, 59, 0.7); padding: 8px; border-radius: 14px; gap: 8px; border: 1px solid rgba(255, 255, 255, 0.12); flex-wrap: wrap; }}
     div[data-testid="stRadio"] label[data-baseweb="radio"] {{ background-color: transparent; padding: 8px 18px !important; border-radius: 10px; transition: all 0.25s ease; }}
     div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {{ background-color: #38BDF8 !important; }}
     div[data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) span {{ color: #0F172A !important; font-weight: 700 !important; }}
     .stExpander, div[data-testid="stForm"] {{ background-color: rgba(30, 41, 59, 0.55) !important; border: 1px solid rgba(255, 255, 255, 0.12) !important; border-radius: 14px !important; padding: 20px !important;}}
-    .btn-merpati-putih {{ display: inline-block; background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%); color: #FFFFFF !important; padding: 12px 28px; border-radius: 10px; text-decoration: none; font-weight: 700; }}
     .hotline-card {{ background: rgba(220, 38, 38, 0.15); border-left: 5px solid #DC2626; padding: 15px; border-radius: 8px; margin-bottom: 15px; }}
     .hotline-title {{ font-size: 1.2rem; font-weight: bold; color: #FCA5A5; }}
     </style>
@@ -145,11 +144,13 @@ with col_logo:
         st.markdown("<h3 style='color:#FFFFFF; margin:0; font-weight:800;'>🕊️ MERPATI PUTIH</h3>", unsafe_allow_html=True)
 
 with col_nav:
+    # Mengembalikan menu Kenali Lebih Dekat dan menyesuaikan nama Ruang Cerita
     menu = st.radio("Menu Navigation", [
         "Beranda", 
+        "Kenali Lebih Dekat",
         "Edukasi & Tools Terpadu", 
         "Kuis GenRe", 
-        "Ruang Cerita", 
+        "Konsultasi & Ruang Cerita", 
         "Kritik & Saran", 
         "Admin"
     ], horizontal=True)
@@ -207,7 +208,31 @@ if menu == "Beranda":
         st.info("Belum ada foto galeri.")
 
 # ---------------------------------------------------------
-# MENU 2: EDUKASI & TOOLS TERPADU
+# MENU 2: KENALI LEBIH DEKAT
+# ---------------------------------------------------------
+elif menu == "Kenali Lebih Dekat":
+    st.markdown('<div class="section-title">✨ Kenali Merpati Putih Lebih Dekat</div>', unsafe_allow_html=True)
+    
+    col_profil1, col_profil2 = st.columns([1, 1])
+    with col_profil1:
+        st.subheader("🌟 Visi Kami")
+        st.write("Mewujudkan generasi muda Cilacap yang terencana, bebas stunting, dan memiliki kesadaran tinggi akan pentingnya kesehatan reproduksi serta masa depan yang cerah.")
+        
+        st.subheader("🎯 Misi Kami")
+        st.write("""
+        1. Memberikan edukasi gizi dan pencegahan stunting secara interaktif.
+        2. Menyediakan wadah konsultasi yang aman bagi remaja.
+        3. Membangun kesadaran tentang bahaya Triad KRR.
+        4. Mendorong remaja putri rutin mengonsumsi Tablet Tambah Darah (TTD).
+        """)
+    
+    with col_profil2:
+        st.subheader("🤝 Siapa Kami?")
+        st.write("Merpati Putih lahir dari keresahan dan kepedulian remaja terhadap tingginya angka stunting dan pernikahan dini. Kami adalah agen perubahan (Agent of Change) dari jalur GenRe yang siap merangkul, mengedukasi, dan menjadi teman curhat yang aman bagi sesama remaja.")
+        st.info("💡 **Prinsip Kami:** Dari Remaja, Oleh Remaja, Untuk Remaja.")
+
+# ---------------------------------------------------------
+# MENU 3: EDUKASI & TOOLS TERPADU
 # ---------------------------------------------------------
 elif menu == "Edukasi & Tools Terpadu":
     st.markdown('<div class="section-title">🚀 Super Tools GenRe Terpadu</div>', unsafe_allow_html=True)
@@ -217,7 +242,7 @@ elif menu == "Edukasi & Tools Terpadu":
         "🗓️ Siklus & Habit", "💰 Dana", "🚨 Hotline", "🏥 Faskes"
     ])
 
-    # 1. TAB MATERI
+    # 1. TAB MATERI (MEMPERBAIKI ERROR GAMBAR DI SINI)
     with t1:
         search_kw = st.text_input("🔍 Cari Materi...")
         materi_all = st.session_state.get("daftar_materi", [])
@@ -226,8 +251,14 @@ elif menu == "Edukasi & Tools Terpadu":
         for m in materi_filtered:
             with st.expander(f"📌 {m.get('Judul')}"):
                 st.markdown(m.get("Isi"))
-                if str(m.get("Foto")) not in ["", "None"]:
-                    st.image(m.get("Foto"), width=500)
+                
+                # FIX: Try-Except untuk mencegah crash jika link gambar kosong/rusak
+                foto_url = m.get("Foto", "")
+                if foto_url and isinstance(foto_url, str) and foto_url.strip() != "":
+                    try:
+                        st.image(foto_url, width=500)
+                    except Exception:
+                        pass # Abaikan jika gambar gagal dimuat, web tidak akan crash
 
     # 2. TAB IMT
     with t2:
@@ -322,7 +353,7 @@ elif menu == "Edukasi & Tools Terpadu":
         st.pydeck_chart(pdk.Deck(map_style="light", initial_view_state=view_faskes, layers=[layer_faskes], tooltip={"html": "<b>{Nama}</b>"}))
 
 # ---------------------------------------------------------
-# MENU 3, 4, 5, 6 (KUIS, CERITA, KRITIK, ADMIN)
+# MENU 4, 5, 6, 7 (KUIS, CERITA, KRITIK, ADMIN)
 # ---------------------------------------------------------
 elif menu == "Kuis GenRe":
     st.markdown('<div class="section-title">🧩 Kuis Kesiapan Remaja (Sample)</div>', unsafe_allow_html=True)
@@ -332,7 +363,7 @@ elif menu == "Kuis GenRe":
         if ans == "Generasi Berencana": st.success("Benar!")
         else: st.error("Salah!")
 
-elif menu == "Ruang Cerita":
+elif menu == "Konsultasi & Ruang Cerita":
     st.markdown('<div class="section-title">💬 Ruang Cerita Anonim</div>', unsafe_allow_html=True)
     daftar_cerita = fetch_api_data(API_URL_CERITA)
     with st.form("cerita_form"):
@@ -359,4 +390,3 @@ elif menu == "Admin":
     if admin_pass == "chandikia":
         st.success("Akses Terbuka")
         st.write("Di sini Admin bisa balas cerita anonim, tambah materi, dan lihat data statistik web.")
-        # [Fitur admin disederhanakan di tampilan ini, refer ke versi sebelumnya jika butuh ekspor CSV utuh]
