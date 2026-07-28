@@ -106,6 +106,7 @@ st.markdown(
     .story-card {{ background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 16px; border-left: 4px solid #38BDF8; margin-bottom: 15px; }}
     .admin-reply-card {{ background: rgba(16, 185, 129, 0.15); border-radius: 10px; padding: 12px; border-left: 4px solid #10B981; margin-top: 10px; }}
     .sertifikat {{ background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); padding: 30px; border-radius: 15px; text-align: center; color: white !important; border: 4px dashed #fef3c7; margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }}
+    .piring-card {{ background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 15px; text-align: center; margin-bottom: 10px; }}
     </style>
 """,
     unsafe_allow_html=True,
@@ -217,7 +218,6 @@ if menu == "Beranda & Peta":
       " wilayah intervensi khusus (Blue Zone) program Merpati Putih."
   )
 
-  # Koordinat Poligon Cilacap Selatan [Longitude, Latitude]
   zona_cilacap_selatan = [
       [108.990, -7.745],
       [109.025, -7.745],
@@ -236,8 +236,8 @@ if menu == "Beranda & Peta":
       "PolygonLayer",
       df_zona,
       get_polygon="koordinat",
-      get_fill_color="[56, 189, 248, 80]",  # Biru transparan
-      get_line_color="[2, 132, 199, 255]",  # Garis tepi biru tegas
+      get_fill_color="[56, 189, 248, 80]",
+      get_line_color="[2, 132, 199, 255]",
       get_line_width=80,
       pickable=True,
       extruded=False,
@@ -247,7 +247,6 @@ if menu == "Beranda & Peta":
       latitude=-7.7279, longitude=109.0063, zoom=12.2, pitch=25
   )
 
-  # INI BAGIAN YANG DIPERBAIKI (CART & DARK)
   st.pydeck_chart(
       pdk.Deck(
           map_provider="carto",
@@ -274,7 +273,7 @@ if menu == "Beranda & Peta":
     st.info("Belum ada foto galeri yang diunggah.")
 
 # ---------------------------------------------------------
-# MENU 2: EDUKASI & TOOLS GIZI (IMT)
+# MENU 2: EDUKASI & TOOLS GIZI (IMT & ISI PIRINGKU)
 # ---------------------------------------------------------
 elif menu == "Edukasi & Tools Gizi":
   st.markdown(
@@ -283,9 +282,11 @@ elif menu == "Edukasi & Tools Gizi":
       unsafe_allow_html=True,
   )
 
-  tab_materi, tab_tools = st.tabs(
-      ["📖 Perpustakaan Materi", "⚖️ Kalkulator IMT (Cegah Stunting)"]
-  )
+  tab_materi, tab_tools, tab_piringku = st.tabs([
+      "📖 Perpustakaan Materi",
+      "⚖️ Kalkulator IMT",
+      "🍽️ Panduan & Cek Isi Piringku",
+  ])
 
   with tab_materi:
     st.write(
@@ -297,7 +298,6 @@ elif menu == "Edukasi & Tools Gizi":
         with st.expander(f"📌 {m.get('Judul', 'Tanpa Judul')}"):
           st.markdown(f"*{m.get('Isi', '')}*")
 
-          # FIX BUG: Memastikan variabel foto valid dan bertipe string sebelum di-split
           if m.get("Foto") and str(m["Foto"]).strip().lower() != "none":
             list_foto = [
                 url.strip()
@@ -305,7 +305,6 @@ elif menu == "Edukasi & Tools Gizi":
                 if url.strip() and url.strip().lower() != "none"
             ]
 
-            # Proteksi agar tidak membuat st.columns(0) yang memicu error
             if len(list_foto) > 0:
               cols_foto = st.columns(min(len(list_foto), 3))
               for idx_f, url_f in enumerate(list_foto):
@@ -355,6 +354,128 @@ elif menu == "Edukasi & Tools Gizi":
             "🚨 **Obesitas**. Sangat berisiko bagi kesehatan reproduksi dan"
             " metabolisme. Segera konsultasikan pola diet sehat ke ahli gizi."
         )
+
+  # FITUR BARU: ISI PIRINGKU
+  with tab_piringku:
+    st.subheader("🍽️ Konsep Isi Piringku (Kemenkes RI)")
+    st.write(
+        "Panduan porsi gizi seimbang dalam sekali makan untuk memenuhi nutrisi"
+        " harian dan **mencegah Stunting sejak usia remaja**."
+    )
+
+    p1, p2, p3, p4 = st.columns(4)
+    with p1:
+      st.markdown(
+          '<div class="piring-card"><h3>🍚 35%</h3><b>Makanan'
+          " Pokok</b><br><small>Nasi, Jagung, Kentang,"
+          " Singkong</small></div>",
+          unsafe_allow_html=True,
+      )
+    with p2:
+      st.markdown(
+          '<div class="piring-card"><h3>🍗 15%</h3><b>Lauk'
+          " Pauk</b><br><small>Ikan, Ayam, Telur, Daging, Tempe,"
+          " Tahu</small></div>",
+          unsafe_allow_html=True,
+      )
+    with p3:
+      st.markdown(
+          '<div class="piring-card"><h3>🥦 35%</h3><b>Sayur'
+          " Mayur</b><br><small>Bayam, Wortel, Brokoli, Kangkung</small></div>",
+          unsafe_allow_html=True,
+      )
+    with p4:
+      st.markdown(
+          '<div class="piring-card"><h3>🍎 15%</h3><b>Buah'
+          " Buahan</b><br><small>Pisang, Jeruk, Pepaya, Apel</small></div>",
+          unsafe_allow_html=True,
+      )
+
+    st.write("---")
+    st.subheader("🧪 Simulasi & Analisis Kelengkapan Piringku")
+    st.write(
+        "Pilih komposisi menu makanmu hari ini untuk dianalisis oleh sistem:"
+    )
+
+    col_s1, col_s2 = st.columns(2)
+    with col_s1:
+      f_pokok = st.selectbox(
+          "1. Makanan Pokok (Karbohidrat)",
+          ["-- Pilih Menu --", "Nasi Putih / Merah", "Kentang / Singkong", "Roti / Mie", "Tidak Ada"],
+      )
+      f_lauk_h = st.selectbox(
+          "2. Lauk Hewani (Kunci Utama Pencegahan Stunting!)",
+          ["-- Pilih Menu --", "Telur Ayam", "Ikan / Udang", "Daging Ayam / Sapi", "Tidak Ada"],
+      )
+      f_lauk_n = st.selectbox(
+          "3. Lauk Nabati",
+          ["-- Pilih Menu --", "Tahu / Tempe", "Kacang-kacangan", "Tidak Ada"],
+      )
+
+    with col_s2:
+      f_sayur = st.selectbox(
+          "4. Sayur-Mayur",
+          ["-- Pilih Menu --", "Sayuran Hijau (Bayam, Kangkung, dll)", "Sayuran Lain (Wortel, Labu, dll)", "Tidak Ada"],
+      )
+      f_buah = st.selectbox(
+          "5. Buah-Buahan",
+          ["-- Pilih Menu --", "Ada (Pisang, Jeruk, Pepaya, dll)", "Tidak Ada"],
+      )
+      f_air = st.checkbox(
+          "💧 Sudah Minum Air Putih Minimal 1-2 Gelas?", value=True
+      )
+
+    if st.button("Analisis Piringku Sekarang 🧐", type="primary"):
+      skor_piring = 0
+      catatan = []
+
+      if f_pokok not in ["-- Pilih Menu --", "Tidak Ada"]:
+        skor_piring += 25
+      else:
+        catatan.append("❌ Belum ada karbohidrat/makanan pokok sebagai sumber energi.")
+
+      if f_lauk_h not in ["-- Pilih Menu --", "Tidak Ada"]:
+        skor_piring += 30  # Bobot tinggi karena krusial untuk cegah stunting
+      else:
+        catatan.append(
+            "🚨 **SANGAT PENTING:** Belum ada Protein Hewani! Protein hewani"
+            " (Telur/Ikan/Daging) adalah zat kunci mencegah Stunting &"
+            " Anemia pada remaja."
+        )
+
+      if f_lauk_n not in ["-- Pilih Menu --", "Tidak Ada"]:
+        skor_piring += 15
+
+      if f_sayur not in ["-- Pilih Menu --", "Tidak Ada"]:
+        skor_piring += 15
+      else:
+        catatan.append("❌ Belum ada Sayuran (Sumber serat, mikronutrien, dan vitamin).")
+
+      if f_buah not in ["-- Pilih Menu --", "Tidak Ada"]:
+        skor_piring += 15
+      else:
+        catatan.append("⚠️ Belum ada Buah-buahan sebagai suplemen vitamin alami.")
+
+      st.markdown(
+          f'<div class="section-title" style="color:#38BDF8; margin-top:20px;'
+          f' margin-bottom:10px;">Skor Nutrisi Piringmu: {skor_piring} /'
+          " 100</div>",
+          unsafe_allow_html=True,
+      )
+
+      if skor_piring >= 85 and f_lauk_h not in ["-- Pilih Menu --", "Tidak Ada"]:
+        st.success(
+            "🎉 **Gizi Seimbang Sempurna!** Piring makanmu sudah memenuhi"
+            " kriteria Isi Piringku Kemenkes RI. Pertahankan pola makan sehat"
+            " ini ya!"
+        )
+      else:
+        st.warning("📋 **Rekomendasi Perbaikan Piringku:**")
+        for c in catatan:
+          st.write(f"- {c}")
+
+      if not f_air:
+        st.info("💡 Jangan lupa minum air putih secukupnya untuk menjaga hidrasi tubuh!")
 
 # ---------------------------------------------------------
 # MENU 3: KUIS GENRE (20 SOAL + SERTIFIKAT)
