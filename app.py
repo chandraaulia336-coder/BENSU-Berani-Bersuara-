@@ -294,15 +294,20 @@ elif menu == "Edukasi & Tools Gizi":
       for m in st.session_state["daftar_materi"]:
         with st.expander(f"📌 {m.get('Judul', 'Tanpa Judul')}"):
           st.markdown(f"*{m.get('Isi', '')}*")
-          if m.get("Foto") and m["Foto"] != "None":
+
+          # FIX BUG: Memastikan variabel foto valid dan bertipe string sebelum di-split
+          if m.get("Foto") and str(m["Foto"]).strip().lower() != "none":
             list_foto = [
                 url.strip()
-                for url in m["Foto"].split(",")
-                if url.strip() and url.strip() != "None"
+                for url in str(m["Foto"]).split(",")
+                if url.strip() and url.strip().lower() != "none"
             ]
-            cols_foto = st.columns(min(len(list_foto), 3))
-            for idx_f, url_f in enumerate(list_foto):
-              cols_foto[idx_f % 3].image(url_f, use_container_width=True)
+
+            # Proteksi agar tidak membuat st.columns(0) yang memicu error
+            if len(list_foto) > 0:
+              cols_foto = st.columns(min(len(list_foto), 3))
+              for idx_f, url_f in enumerate(list_foto):
+                cols_foto[idx_f % 3].image(url_f, use_container_width=True)
     else:
       st.info("Database materi belum tersedia.")
 
