@@ -34,7 +34,13 @@ def fetch_api_data(url):
     return []
   try:
     res = requests.get(url, timeout=6)
-    return res.json() if res.status_code == 200 else []
+    if res.status_code == 200:
+      data = res.json()
+      if isinstance(data, list):
+        return data
+      elif isinstance(data, dict) and "data" in data:
+        return data["data"]
+    return []
   except Exception:
     return []
 
@@ -260,15 +266,35 @@ if menu == "Beranda & Peta":
       )
   )
 
+  # GALERI (GABUNGAN DATA API GOOGLE APPS SCRIPT + FALLBACK DEFAULTS)
   st.markdown(
       '<div id="galeri" class="section-title">🖼️ Peta Jejak Keberdampakan'
       " (Galeri)</div>",
       unsafe_allow_html=True,
   )
-  if st.session_state["daftar_galeri"]:
+
+  galeri_api = st.session_state.get("daftar_galeri", [])
+  foto_default = [
+      "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000",
+      "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1000",
+      "https://images.unsplash.com/photo-1526976663112-91c2e31ce00b?q=80&w=1000",
+  ]
+
+  semua_galeri = []
+  if isinstance(galeri_api, list) and len(galeri_api) > 0:
+    semua_galeri.extend(galeri_api)
+
+  for img in foto_default:
+    if img not in semua_galeri:
+      semua_galeri.append(img)
+
+  if semua_galeri:
     g_cols = st.columns(3)
-    for i, url_img in enumerate(st.session_state["daftar_galeri"]):
-      g_cols[i % 3].image(url_img, use_container_width=True)
+    for i, url_img in enumerate(semua_galeri):
+      try:
+        g_cols[i % 3].image(url_img, use_container_width=True)
+      except Exception:
+        pass
   else:
     st.info("Belum ada foto galeri yang diunggah.")
 
@@ -355,7 +381,6 @@ elif menu == "Edukasi & Tools Gizi":
             " metabolisme. Segera konsultasikan pola diet sehat ke ahli gizi."
         )
 
-  # FITUR BARU: ISI PIRINGKU
   with tab_piringku:
     st.subheader("🍽️ Konsep Isi Piringku (Kemenkes RI)")
     st.write(
@@ -401,11 +426,23 @@ elif menu == "Edukasi & Tools Gizi":
     with col_s1:
       f_pokok = st.selectbox(
           "1. Makanan Pokok (Karbohidrat)",
-          ["-- Pilih Menu --", "Nasi Putih / Merah", "Kentang / Singkong", "Roti / Mie", "Tidak Ada"],
+          [
+              "-- Pilih Menu --",
+              "Nasi Putih / Merah",
+              "Kentang / Singkong",
+              "Roti / Mie",
+              "Tidak Ada",
+          ],
       )
       f_lauk_h = st.selectbox(
           "2. Lauk Hewani (Kunci Utama Pencegahan Stunting!)",
-          ["-- Pilih Menu --", "Telur Ayam", "Ikan / Udang", "Daging Ayam / Sapi", "Tidak Ada"],
+          [
+              "-- Pilih Menu --",
+              "Telur Ayam",
+              "Ikan / Udang",
+              "Daging Ayam / Sapi",
+              "Tidak Ada",
+          ],
       )
       f_lauk_n = st.selectbox(
           "3. Lauk Nabati",
@@ -415,7 +452,12 @@ elif menu == "Edukasi & Tools Gizi":
     with col_s2:
       f_sayur = st.selectbox(
           "4. Sayur-Mayur",
-          ["-- Pilih Menu --", "Sayuran Hijau (Bayam, Kangkung, dll)", "Sayuran Lain (Wortel, Labu, dll)", "Tidak Ada"],
+          [
+              "-- Pilih Menu --",
+              "Sayuran Hijau (Bayam, Kangkung, dll)",
+              "Sayuran Lain (Wortel, Labu, dll)",
+              "Tidak Ada",
+          ],
       )
       f_buah = st.selectbox(
           "5. Buah-Buahan",
@@ -432,10 +474,12 @@ elif menu == "Edukasi & Tools Gizi":
       if f_pokok not in ["-- Pilih Menu --", "Tidak Ada"]:
         skor_piring += 25
       else:
-        catatan.append("❌ Belum ada karbohidrat/makanan pokok sebagai sumber energi.")
+        catatan.append(
+            "❌ Belum ada karbohidrat/makanan pokok sebagai sumber energi."
+        )
 
       if f_lauk_h not in ["-- Pilih Menu --", "Tidak Ada"]:
-        skor_piring += 30  # Bobot tinggi karena krusial untuk cegah stunting
+        skor_piring += 30
       else:
         catatan.append(
             "🚨 **SANGAT PENTING:** Belum ada Protein Hewani! Protein hewani"
@@ -449,12 +493,16 @@ elif menu == "Edukasi & Tools Gizi":
       if f_sayur not in ["-- Pilih Menu --", "Tidak Ada"]:
         skor_piring += 15
       else:
-        catatan.append("❌ Belum ada Sayuran (Sumber serat, mikronutrien, dan vitamin).")
+        catatan.append(
+            "❌ Belum ada Sayuran (Sumber serat, mikronutrien, dan vitamin)."
+        )
 
       if f_buah not in ["-- Pilih Menu --", "Tidak Ada"]:
         skor_piring += 15
       else:
-        catatan.append("⚠️ Belum ada Buah-buahan sebagai suplemen vitamin alami.")
+        catatan.append(
+            "⚠️ Belum ada Buah-buahan sebagai suplemen vitamin alami."
+        )
 
       st.markdown(
           f'<div class="section-title" style="color:#38BDF8; margin-top:20px;'
@@ -475,7 +523,10 @@ elif menu == "Edukasi & Tools Gizi":
           st.write(f"- {c}")
 
       if not f_air:
-        st.info("💡 Jangan lupa minum air putih secukupnya untuk menjaga hidrasi tubuh!")
+        st.info(
+            "💡 Jangan lupa minum air putih secukupnya untuk menjaga hidrasi"
+            " tubuh!"
+        )
 
 # ---------------------------------------------------------
 # MENU 3: KUIS GENRE (20 SOAL + SERTIFIKAT)
@@ -913,6 +964,10 @@ elif menu == "Admin Panel":
     with tab3:
       l = st.text_input("URL Gambar")
       if st.button("Tambah 🖼️") and l:
+        if "daftar_galeri" not in st.session_state or not isinstance(
+            st.session_state["daftar_galeri"], list
+        ):
+          st.session_state["daftar_galeri"] = []
         st.session_state["daftar_galeri"].append(l)
         save_api_data(API_URL_GALERI, st.session_state["daftar_galeri"])
         st.success("Gambar berhasil ditambahkan!")
