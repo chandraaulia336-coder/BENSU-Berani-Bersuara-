@@ -56,12 +56,116 @@ def save_api_data(url, data_list):
 
 
 # ==========================================
-# 4. SESSION STATE
+# 4. INITIAL MATERI EDUKASI (DEFAULT + NEW)
+# ==========================================
+MATERI_DEFAULT = [
+    {
+        "Judul": "🩸 Anemia: 'Baterai Drop' Penyebab Otak Lemot & Muka Pucat!",
+        "Isi": (
+            "**Pernah ngerasa gampang ngantuk di kelas, muka pucat, dan mager"
+            " parah? Bisa jadi kamu kena Anemia!** 🪫\n\n"
+            "Anemia terjadi saat kadar **Hemoglobin (Hb)** drop akibat"
+            " kekurangan zat besi. Hb ini ibarat 'ojek online' di dalam darah"
+            " yang bertugas mengantar oksigen ke otak dan seluruh tubuh.\n\n"
+            "**Gaya 5L yang Bikin Hidup Nggak Asyik:**\n"
+            "1. **L**esu\n2. **L**emah\n3. **L**elah\n4. **L**etih\n5."
+            " **L**alai (Gampang lupa & susah fokus)\n\n"
+            "**Kenapa Remaja Putri Paling Rawan?**\n"
+            "Karena remaja putri mengalami menstruasi setiap bulan dan sering"
+            " kali melakukan diet ketat yang salah.\n\n"
+            "**Solusi Sat-Set Biar Baterai Tubuh Full Lagi:**\n"
+            "• 💊 **Minum TTD (Tablet Tambah Darah):** Rutin **1 tablet seminggu"
+            " sekali** (dan **1 tablet sehari saat menstruasi**).\n"
+            "• 🍊 **Combo Vitamin C:** Minum TTD bareng es jeruk/jus buah biar"
+            " penyerapan zat besinya maksimal!\n"
+            "• 🚫 **Hindari Banting Zat Besi:** Jangan minum TTD barengan sama"
+            " **Kopi, Teh, atau Susu**, karena bisa bikin zat besinya gagal"
+            " diserap tubuh."
+        ),
+        "Foto": (
+            "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=800&auto=format&fit=crop"
+        ),
+    },
+    {
+        "Judul": (
+            "🛑 Stunting: Bukan Cuma Pendek, Tapi Otak Juga 'Loading' Lama!"
+        ),
+        "Isi": (
+            "**Banyak yang salah kaprah: 'Pendek itu kan faktor keturunan"
+            " (genetik)?' Eits, tunggu dulu!** ✋\n\n"
+            "Orang pendek belum tentu stunting, tapi orang stunting **pasti"
+            " pendek** dan pertumbuhan otak serta daya tahan tubuhnya terhambat"
+            " akibat **kurang gizi kronis dalam 1.000 Hari Pertama Kehidupan"
+            " (HPHT)**.\n\n"
+            "**Dampak Horor Stunting:**\n"
+            "• 🧠 **IQ Rendah:** Otak jadi lambat merespon dan sulit bersaing di"
+            " dunia kerja.\n"
+            "• 🤒 **Gampang Sakit:** Imunitas tubuh lemah.\n"
+            "• 💸 **Biaya Berobat Mahal:** Berisiko kena penyakit tidak menular"
+            " (diabetes, jantung) saat dewasa.\n\n"
+            "**Gimana Cara Remaja Cegah Stunting dari Sekarang?**\n"
+            "• 🥚 **Gempur Protein Hewani:** Rutin makan Telur, Ikan, Ayam, atau"
+            " Daging. Telur 1-2 butir sehari itu *superfood* murah cegah"
+            " stunting!\n"
+            "• 💍 **Stop Pernikahan Dini:** Usia ibu yang belum siap (di bawah"
+            " 21 tahun) bikin risiko bayi lahir stunting melonjak tajam!\n"
+            "• 🩺 **Skrining Catin (Calon Pengantin):** Cek Hb dan Lingkar"
+            " Lengan Atas (LILA) minimal 3 bulan sebelum nikah."
+        ),
+        "Foto": (
+            "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=800&auto=format&fit=crop"
+        ),
+    },
+    {
+        "Judul": (
+            "🚀 Bonus Demografi: Indonesia Emas atau 'Bencana Demografi'?"
+        ),
+        "Isi": (
+            "**Kamu sadar nggak, kalau kamu dan teman-temanmu adalah penentu"
+            " nasib Indonesia beberapa tahun ke depan?** 🇮🇩🔥\n\n"
+            "**Apa Itu Bonus Demografi?**\n"
+            "Bonus Demografi adalah momen langka sekali seumur hidup di mana"
+            " jumlah **penduduk usia produktif (15-64 tahun)** jauh lebih"
+            " banyak dibandingkan penduduk non-produktif.\n\n"
+            "**Peluang 'Indonesia Emas 2045':**\n"
+            "Kalau remajanya cerdas, sehat, kreatif, dan punya *skill* tinggi,"
+            " Indonesia bisa berubah jadi negara maju dunia!\n\n"
+            "**Ancaman 'Bencana Demografi':**\n"
+            "Tapi kalau remajanya malah terjebak **Triad KRR** (Seks Bebas, Nikah"
+            " Dini, NAPZA), kena **Anemia**, dan melahirkan anak-anak"
+            " **Stunting**, bonus demografi justru jadi beban berat buat"
+            " negara!\n\n"
+            "**Peran Kamu Sebagai GenRe:**\n"
+            "1. 📚 Bekali diri dengan *Life Skills* & literasi digital.\n"
+            "2. 🛡️ Berani bilang **TIDAK** pada Pernikahan Dini & Narkoba.\n"
+            "3. 🎯 Rencanakan pendidikan, karir, dan pernikahan secara matang."
+        ),
+        "Foto": (
+            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop"
+        ),
+    },
+]
+
+# ==========================================
+# 5. SESSION STATE INITIALIZATION
 # ==========================================
 if "daftar_materi" not in st.session_state:
-  st.session_state["daftar_materi"] = fetch_api_data(API_URL_MATERI)
+  api_materi = fetch_api_data(API_URL_MATERI)
+  st.session_state["daftar_materi"] = (
+      api_materi if len(api_materi) > 0 else MATERI_DEFAULT
+  )
+else:
+  # Memastikan materi bawaan selalu masuk jika belum terdaftar
+  for m_def in MATERI_DEFAULT:
+    if not any(
+        x.get("Judul") == m_def["Judul"]
+        for x in st.session_state["daftar_materi"]
+    ):
+      st.session_state["daftar_materi"].append(m_def)
+
 if "daftar_galeri" not in st.session_state:
   st.session_state["daftar_galeri"] = fetch_api_data(API_URL_GALERI)
+
 if "tagline" not in st.session_state:
   st.session_state["tagline"] = (
       "Sebuah Gerakan dari Remaja untuk Melangitkan Harapan dan Membumikan"
@@ -70,7 +174,7 @@ if "tagline" not in st.session_state:
 
 
 # ==========================================
-# 5. WALLPAPER BACKGROUND
+# 6. WALLPAPER BACKGROUND HELPER
 # ==========================================
 def get_base64_bg(image_path):
   if os.path.exists(image_path):
@@ -83,14 +187,14 @@ def get_base64_bg(image_path):
 bg_image = get_base64_bg("25117787.webp")
 
 # ==========================================
-# 6. CUSTOM CSS (STYLING)
+# 7. CUSTOM CSS (STYLING)
 # ==========================================
 st.markdown(
     f"""
     <style>
     html {{ scroll-behavior: smooth; }}
     .stApp {{
-        background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url("{bg_image}"); 
+        background: linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.95)), url("{bg_image}"); 
         background-size: cover !important; background-position: center !important; background-attachment: fixed !important;
         color: #F8FAFC !important;
     }}
@@ -119,7 +223,7 @@ st.markdown(
 )
 
 # ==========================================
-# 7. HEADER & NAVIGATION
+# 8. HEADER & NAVIGATION
 # ==========================================
 col_logo, col_nav = st.columns([1, 4], vertical_alignment="center")
 with col_logo:
@@ -300,11 +404,12 @@ elif menu == "Edukasi & Tools Gizi":
   # TAB 1: MATERI + SEARCH BAR
   with tab_materi:
     st.write(
-        "Jelajahi berbagai materi terkait 8 Fungsi Keluarga, PUP, dan"
-        " pencegahan Triad KRR."
+        "Jelajahi berbagai materi terkait 8 Fungsi Keluarga, PUP, Stunting,"
+        " Anemia, Bonus Demografi, dan pencegahan Triad KRR."
     )
     search_kw = st.text_input(
-        "🔍 Cari Materi Edukasi (misal: Stunting, Anemia, PUP, Narkoba)..."
+        "🔍 Cari Materi Edukasi (misal: Stunting, Anemia, PUP, Bonus"
+        " Demografi)..."
     )
 
     materi_all = st.session_state.get("daftar_materi", [])
@@ -321,19 +426,22 @@ elif menu == "Edukasi & Tools Gizi":
     if materi_filtered:
       for m in materi_filtered:
         with st.expander(f"📌 {m.get('Judul', 'Tanpa Judul')}"):
-          st.markdown(f"*{m.get('Isi', '')}*")
+          st.markdown(m.get("Isi", ""))
 
-          if m.get("Foto") and str(m["Foto"]).strip().lower() != "none":
+          foto_val = str(m.get("Foto", "")).strip()
+          if foto_val and foto_val.lower() != "none":
             list_foto = [
                 url.strip()
-                for url in str(m["Foto"]).split(",")
+                for url in foto_val.split(",")
                 if url.strip() and url.strip().lower() != "none"
             ]
-
             if len(list_foto) > 0:
               cols_foto = st.columns(min(len(list_foto), 3))
               for idx_f, url_f in enumerate(list_foto):
-                cols_foto[idx_f % 3].image(url_f, use_container_width=True)
+                try:
+                  cols_foto[idx_f % 3].image(url_f, use_container_width=True)
+                except Exception:
+                  pass
     else:
       st.info("Materi yang dicari tidak ditemukan.")
 
@@ -595,7 +703,6 @@ elif menu == "Edukasi & Tools Gizi":
           for c in catatan_sn:
             st.write(f"- {c}")
 
-        # Download Report Summary
         txt_summary = (
             f"=== LAPORAN SKRINING SIAP NIKAH MERPATI PUTIH ===\n"
             f"Tanggal: {datetime.now().strftime('%d/%m/%Y')}\n"
@@ -728,7 +835,7 @@ elif menu == "Edukasi & Tools Gizi":
           " HARI** selama masa menstruasi berlangsung.\n\n🌿 **Hari Biasa"
           " (Tidak Haid):** Minum **1 Tablet Tambah Darah 1 MINGGU SEKALI**"
           " secara teratur.\n\n💡 *Tips:* Minum TTD dengan air putih/jus buah"
-          " (mengandung Vitamin C). Hindari minum TTD bersaamaan dengan"
+          " (mengandung Vitamin C). Hindari minum TTD bersamaan dengan"
           " kopi/teh karena dapat menghambat penyerapan zat besi."
       )
 
@@ -1149,19 +1256,24 @@ elif menu == "Admin Panel":
     with tab2:
       aksi = st.radio("Aksi:", ["Tambah", "Edit/Hapus"], horizontal=True)
       if aksi == "Tambah":
-        j = st.text_input("Judul")
-        i = st.text_area("Isi")
+        j = st.text_input("Judul Materi")
+        i = st.text_area("Isi Materi (Support Markdown)")
+        f = st.text_input(
+            "URL Foto (Opsional, pisahkan koma jika lebih dari 1)"
+        )
         if st.button("Publish 🚀") and j and i:
-          st.session_state["daftar_materi"].append(
-              {"Judul": j, "Isi": i, "Foto": "None"}
-          )
+          st.session_state["daftar_materi"].append({
+              "Judul": j,
+              "Isi": i,
+              "Foto": f if f.strip() else "None",
+          })
           save_api_data(API_URL_MATERI, st.session_state["daftar_materi"])
           st.success("Materi berhasil ditambahkan!")
           st.rerun()
 
     with tab3:
-      l = st.text_input("URL Gambar")
-      if st.button("Tambah 🖼️") and l:
+      l = st.text_input("URL Gambar Galeri Baru")
+      if st.button("Tambah Gambar 🖼️") and l:
         if "daftar_galeri" not in st.session_state or not isinstance(
             st.session_state["daftar_galeri"], list
         ):
