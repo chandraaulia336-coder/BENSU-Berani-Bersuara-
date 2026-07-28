@@ -281,7 +281,7 @@ if menu == "Beranda & Peta":
     st.info("Belum ada foto galeri yang diunggah.")
 
 # ---------------------------------------------------------
-# MENU 2: EDUKASI & TOOLS GIZI (IMT & ISI PIRINGKU)
+# MENU 2: EDUKASI & TOOLS GIZI + SIAP NIKAH
 # ---------------------------------------------------------
 elif menu == "Edukasi & Tools Gizi":
   st.markdown(
@@ -290,10 +290,11 @@ elif menu == "Edukasi & Tools Gizi":
       unsafe_allow_html=True,
   )
 
-  tab_materi, tab_tools, tab_piringku = st.tabs([
+  tab_materi, tab_tools, tab_piringku, tab_siapnikah = st.tabs([
       "📖 Perpustakaan Materi",
       "⚖️ Kalkulator IMT",
       "🍽️ Panduan & Cek Isi Piringku",
+      "💍 Skrining Siap Nikah (BKKBN)",
   ])
 
   with tab_materi:
@@ -509,6 +510,180 @@ elif menu == "Edukasi & Tools Gizi":
             "💡 Jangan lupa minum air putih secukupnya untuk menjaga hidrasi"
             " tubuh!"
         )
+
+  # FITUR BARU: SKRINING SIAP NIKAH (ELSIMIL BKKBN)
+  with tab_siapnikah:
+    st.subheader("💍 Skrining Kesiapan Nikah & Hamil (Standar Elsimil BKKBN)")
+    st.write(
+        "Pencegahan Stunting paling efektif dimulai dari **3 Bulan Sebelum"
+        " Pernikahan**. Yuk cek kesiapan fisik, gizi, dan mentalmu!"
+    )
+
+    gender = st.radio(
+        "Pilih Jenis Kelamin Calon Pengantin:",
+        ["👩 Wanita (Calon Ibu)", "👨 Pria (Calon Ayah)"],
+        horizontal=True,
+    )
+
+    st.write("---")
+
+    if "Wanita" in gender:
+      col_w1, col_w2 = st.columns(2)
+      with col_w1:
+        u_wanita = st.number_input("Usia Calon Pengantin Wanita (Tahun)", 15, 50, 22)
+        hb_wanita = st.number_input(
+            "Kadar Hemoglobin / Hb (g/dL) - *Cek Puskesmas*", 7.0, 18.0, 12.5, step=0.1
+        )
+        lila_wanita = st.number_input(
+            "Lingkar Lengan Atas / LILA (cm)", 15.0, 40.0, 24.0, step=0.5
+        )
+
+      with col_w2:
+        tt_wanita = st.checkbox(
+            "💉 Sudah Mendapat Imunisasi Tetanus Toksoid (TT)?", value=True
+        )
+        ttd_wanita = st.checkbox(
+            "💊 Rutin Minum Tablet Tambah Darah (TTD)?", value=True
+        )
+        fin_wanita = st.checkbox("💰 Ada Perencanaan Finansial & Kerja?", value=True)
+        psikolog_wanita = st.checkbox(
+            "🧠 Siap Secara Mental / Emosional?", value=True
+        )
+
+      if st.button("Cek Hasil Skrining Wanita 🩺", type="primary"):
+        skor_sn = 0
+        catatan_sn = []
+
+        # Usia (Min 21)
+        if u_wanita >= 21:
+          skor_sn += 25
+        else:
+          catatan_sn.append(
+              f"🚨 **Usia Belum Ideal ({u_wanita} Thn):** Rekomendasi BKKBN"
+              " wanita menikah minimal usia 21 tahun untuk kesiapan organ"
+              " reproduksi dan panggul."
+          )
+
+        # Hb (Min 12)
+        if hb_wanita >= 12.0:
+          skor_sn += 25
+        else:
+          catatan_sn.append(
+              f"🩸 **Kadar Hb Rendah ({hb_wanita} g/dL):** Terindikasi Anemia!"
+              " Berisiko tinggi melahirkan anak stunting dan pendarahan saat"
+              " melahirkan. Segera konsumsi Tablet Tambah Darah (TTD) & makanan"
+              " tinggi zat besi."
+          )
+
+        # LILA (Min 23.5)
+        if lila_wanita >= 23.5:
+          skor_sn += 25
+        else:
+          catatan_sn.append(
+              f"📏 **LILA Kurang dari 23.5 cm ({lila_wanita} cm):** Berisiko"
+              " KEK (Kekurangan Energi Kronis). Perbaiki gizi sebelum hamil"
+              " agar melahirkan bayi berat normal."
+          )
+
+        # Imunisasi & Kesiapan Mental
+        if tt_wanita and fin_wanita and psikolog_wanita:
+          skor_sn += 25
+        else:
+          catatan_sn.append(
+              "⚠️ Lengkapi Imunisasi TT di Puskesmas serta matangkan diskusi"
+              " finansial & mental bersama pasangan."
+          )
+
+        st.markdown(
+            f"### Indeks Kesiapan Nikah: **{skor_sn}%**"
+        )
+        if skor_sn == 100:
+          st.success(
+              "🎉 **SANGAT SIAP NIKAH & HAMIL!** Fisik dan gizi kamu ideal"
+              " untuk melahirkan generasi penerus yang sehat dan bebas"
+              " Stunting."
+          )
+        else:
+          st.warning("📋 **Rekomendasi Intervensi Kesehatan:**")
+          for c in catatan_sn:
+            st.write(f"- {c}")
+
+    else:  # Pria
+      col_m1, col_m2 = st.columns(2)
+      with col_m1:
+        u_pria = st.number_input("Usia Calon Pengantin Pria (Tahun)", 15, 60, 25)
+        rokok_pria = st.selectbox(
+            "Kebiasaan Merokok",
+            ["Tidak Merokok", "Perokok Pasif", "Perokok Aktif"],
+        )
+
+      with col_m2:
+        sehat_pria = st.checkbox(
+            "🩺 Bebas Penyakit Menular / TBC / NAPZA (Pemeriksaan Puskesmas)?",
+            value=True,
+        )
+        fin_pria = st.checkbox(
+            "💼 Memiliki Penghasilan / Kesiapan Finansial Mampu Menafkahi?",
+            value=True,
+        )
+        psikolog_pria = st.checkbox(
+            "👨‍👩‍👧 Siap Menjadi Kepala Keluarga & Mendampingi Istri?", value=True
+        )
+
+      if st.button("Cek Hasil Skrining Pria 👨‍⚕️", type="primary"):
+        skor_pria = 0
+        catatan_pria = []
+
+        if u_pria >= 25:
+          skor_pria += 30
+        else:
+          catatan_pria.append(
+              f"🚨 **Usia Belum Ideal ({u_pria} Thn):** Usia ideal pria menurut"
+              " BKKBN adalah 25 tahun (matang secara ekonomi dan emosional)."
+          )
+
+        if rokok_pria == "Tidak Merokok":
+          skor_pria += 30
+        elif rokok_pria == "Perokok Pasif":
+          skor_pria += 20
+          catatan_pria.append(
+              "🚬 **Perokok Pasif:** Hindari paparan asap rokok lingkungan"
+              " sekitar."
+          )
+        else:
+          catatan_pria.append(
+              "🚭 **Perokok Aktif:** Asap rokok merusak kualitas sperma dan"
+              " menjadi racun berbahaya bagi janin/calon ibu hamil di rumah."
+              " Disarankan berhenti merokok!"
+          )
+
+        if sehat_pria:
+          skor_pria += 20
+        else:
+          catatan_pria.append(
+              "🏥 Segera lakukan pemeriksaan kesehatan menyeluruh di Puskesmas"
+              " terdekat."
+          )
+
+        if fin_pria and psikolog_pria:
+          skor_pria += 20
+        else:
+          catatan_pria.append(
+              "💰 Matangkan kesiapan finansial dan mental kepemimpinan keluarga."
+          )
+
+        st.markdown(
+            f"### Indeks Kesiapan Nikah: **{skor_pria}%**"
+        )
+        if skor_pria >= 90:
+          st.success(
+              "🎉 **SANGAT SIAP NIKAH!** Kamu siap menjadi kepala keluarga"
+              " yang bertanggung jawab dan menjaga kesehatan calon ibu & anak."
+          )
+        else:
+          st.warning("📋 **Rekomendasi Persiapan:**")
+          for c in catatan_pria:
+            st.write(f"- {c}")
 
 # ---------------------------------------------------------
 # MENU 3: KUIS GENRE (20 SOAL + SERTIFIKAT)
