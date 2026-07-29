@@ -501,27 +501,29 @@ elif menu == "Edukasi & Tools Gizi":
     with p1:
       st.markdown(
           '<div class="piring-card"><h3>🍚 35%</h3><b>Makanan'
-          " Pokok</b><br><small>Nasi, Jagung, Kentang,"
-          " Singkong</small></div>",
+          " Pokok</b><br><small>Nasi, Jagung, Kentang, Singkong</small>"
+          "<br><span style='color:#38BDF8; font-weight:bold;'>± 150 gram</span></div>",
           unsafe_allow_html=True,
       )
     with p2:
       st.markdown(
           '<div class="piring-card"><h3>🍗 15%</h3><b>Lauk'
-          " Pauk</b><br><small>Ikan, Ayam, Telur, Daging, Tempe,"
-          " Tahu</small></div>",
+          " Pauk</b><br><small>Ikan, Ayam, Telur, Daging, Tempe, Tahu</small>"
+          "<br><span style='color:#38BDF8; font-weight:bold;'>± 75 - 150 gram</span></div>",
           unsafe_allow_html=True,
       )
     with p3:
       st.markdown(
           '<div class="piring-card"><h3>🥦 35%</h3><b>Sayur'
-          " Mayur</b><br><small>Bayam, Wortel, Brokoli, Kangkung</small></div>",
+          " Mayur</b><br><small>Bayam, Wortel, Brokoli, Kangkung</small>"
+          "<br><span style='color:#38BDF8; font-weight:bold;'>± 150 gram</span></div>",
           unsafe_allow_html=True,
       )
     with p4:
       st.markdown(
           '<div class="piring-card"><h3>🍎 15%</h3><b>Buah'
-          " Buahan</b><br><small>Pisang, Jeruk, Pepaya, Apel</small></div>",
+          " Buahan</b><br><small>Pisang, Jeruk, Pepaya, Apel</small>"
+          "<br><span style='color:#38BDF8; font-weight:bold;'>± 150 gram</span></div>",
           unsafe_allow_html=True,
       )
 
