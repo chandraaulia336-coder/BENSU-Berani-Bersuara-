@@ -528,90 +528,88 @@ elif menu == "Edukasi & Tools Gizi":
       )
 
     st.write("---")
-    st.subheader("🧪 Simulasi & Analisis Kelengkapan Piringku")
+    st.subheader("🧪 Simulasi & Analisis Kelengkapan Piringku (Versi Gram)")
+    st.write("Masukkan jenis makanan beserta perkiraan berat porsinya (dalam gram) untuk melihat skor nutrisimu!")
 
     col_s1, col_s2 = st.columns(2)
+    
     with col_s1:
-      f_pokok = st.selectbox(
-          "1. Makanan Pokok (Karbohidrat)",
-          [
-              "-- Pilih Menu --",
-              "Nasi Putih / Merah",
-              "Kentang / Singkong",
-              "Roti / Mie",
-              "Tidak Ada",
-          ],
-      )
-      f_lauk_h = st.selectbox(
-          "2. Lauk Hewani (Kunci Utama Pencegahan Stunting!)",
-          [
-              "-- Pilih Menu --",
-              "Telur Ayam",
-              "Ikan / Udang",
-              "Daging Ayam / Sapi",
-              "Tidak Ada",
-          ],
-      )
-      f_lauk_n = st.selectbox(
-          "3. Lauk Nabati",
-          ["-- Pilih Menu --", "Tahu / Tempe", "Kacang-kacangan", "Tidak Ada"],
-      )
+      st.markdown("**1. Makanan Pokok (Karbohidrat)**")
+      f_pokok = st.selectbox("Menu Karbohidrat", ["-- Pilih Menu --", "Nasi Putih / Merah", "Kentang / Singkong", "Roti / Mie", "Tidak Ada"], label_visibility="collapsed")
+      g_pokok = st.number_input("Porsi Karbohidrat (Gram)", min_value=0, max_value=600, value=0, step=10)
+
+      st.markdown("**2. Lauk Hewani (Kunci Cegah Stunting!)**")
+      f_lauk_h = st.selectbox("Menu Lauk Hewani", ["-- Pilih Menu --", "Telur Ayam", "Ikan / Udang", "Daging Ayam / Sapi", "Tidak Ada"], label_visibility="collapsed")
+      g_lauk_h = st.number_input("Porsi Lauk Hewani (Gram)", min_value=0, max_value=500, value=0, step=10)
+
+      st.markdown("**3. Lauk Nabati**")
+      f_lauk_n = st.selectbox("Menu Lauk Nabati", ["-- Pilih Menu --", "Tahu / Tempe", "Kacang-kacangan", "Tidak Ada"], label_visibility="collapsed")
+      g_lauk_n = st.number_input("Porsi Lauk Nabati (Gram)", min_value=0, max_value=500, value=0, step=10)
 
     with col_s2:
-      f_sayur = st.selectbox(
-          "4. Sayur-Mayur",
-          [
-              "-- Pilih Menu --",
-              "Sayuran Hijau (Bayam, Kangkung, dll)",
-              "Sayuran Lain (Wortel, Labu, dll)",
-              "Tidak Ada",
-          ],
-      )
-      f_buah = st.selectbox(
-          "5. Buah-Buahan",
-          ["-- Pilih Menu --", "Ada (Pisang, Jeruk, Pepaya, dll)", "Tidak Ada"],
-      )
-      f_air = st.checkbox(
-          "💧 Sudah Minum Air Putih Minimal 1-2 Gelas?", value=True
-      )
+      st.markdown("**4. Sayur-Mayur**")
+      f_sayur = st.selectbox("Menu Sayur", ["-- Pilih Menu --", "Sayuran Hijau (Bayam, dll)", "Sayuran Lain (Wortel, dll)", "Tidak Ada"], label_visibility="collapsed")
+      g_sayur = st.number_input("Porsi Sayur (Gram)", min_value=0, max_value=500, value=0, step=10)
+
+      st.markdown("**5. Buah-Buahan**")
+      f_buah = st.selectbox("Menu Buah", ["-- Pilih Menu --", "Ada (Pisang, Jeruk, dll)", "Tidak Ada"], label_visibility="collapsed")
+      g_buah = st.number_input("Porsi Buah (Gram)", min_value=0, max_value=500, value=0, step=10)
+
+      st.markdown("**6. Kebutuhan Cairan**")
+      f_air = st.checkbox("💧 Sudah Minum Air Putih Minimal 1-2 Gelas?", value=True)
 
     if st.button("Analisis Piringku Sekarang 🧐", type="primary"):
       skor_piring = 0
       catatan = []
 
-      if f_pokok not in ["-- Pilih Menu --", "Tidak Ada"]:
-        skor_piring += 25
+      # Analisis Karbohidrat (Ideal ~150g)
+      if f_pokok not in ["-- Pilih Menu --", "Tidak Ada"] and g_pokok > 0:
+        if 100 <= g_pokok <= 200:
+          skor_piring += 20
+        elif g_pokok > 200:
+          skor_piring += 10
+          catatan.append("⚠️ Porsi Karbohidrat berlebih (Maksimal ~150g). Kurangi sedikit untuk menghindari risiko obesitas.")
+        else:
+          skor_piring += 10
+          catatan.append("⚠️ Porsi Karbohidrat kurang dari 100g. Tubuhmu butuh energi lebih untuk beraktivitas.")
       else:
-        catatan.append(
-            "❌ Belum ada karbohidrat/makanan pokok sebagai sumber energi."
-        )
+        catatan.append("❌ Belum ada karbohidrat/makanan pokok sebagai sumber energi utama.")
 
-      if f_lauk_h not in ["-- Pilih Menu --", "Tidak Ada"]:
-        skor_piring += 30
+      # Analisis Lauk Hewani (Ideal 75-150g)
+      if f_lauk_h not in ["-- Pilih Menu --", "Tidak Ada"] and g_lauk_h > 0:
+        if 50 <= g_lauk_h <= 200:
+          skor_piring += 30
+        else:
+          skor_piring += 15
+          catatan.append("⚠️ Porsi Lauk Hewani kurang pas. Idealnya 75-150g per sekali makan.")
       else:
-        catatan.append(
-            "🚨 **SANGAT PENTING:** Belum ada Protein Hewani! Protein hewani"
-            " (Telur/Ikan/Daging) adalah zat kunci mencegah Stunting &"
-            " Anemia pada remaja."
-        )
+        catatan.append("🚨 **SANGAT PENTING:** Belum ada Protein Hewani! (Telur/Ikan/Daging) adalah zat wajib cegah Stunting & Anemia.")
 
-      if f_lauk_n not in ["-- Pilih Menu --", "Tidak Ada"]:
-        skor_piring += 15
+      # Analisis Lauk Nabati (Ideal ~50-100g)
+      if f_lauk_n not in ["-- Pilih Menu --", "Tidak Ada"] and g_lauk_n > 0:
+        skor_piring += 10
 
-      if f_sayur not in ["-- Pilih Menu --", "Tidak Ada"]:
-        skor_piring += 15
+      # Analisis Sayuran (Ideal ~150g)
+      if f_sayur not in ["-- Pilih Menu --", "Tidak Ada"] and g_sayur > 0:
+        if g_sayur >= 100:
+          skor_piring += 20
+        else:
+          skor_piring += 10
+          catatan.append("⚠️ Porsi Sayur kurang (Idealnya setara dengan jumlah nasi, ± 150g).")
       else:
-        catatan.append(
-            "❌ Belum ada Sayuran (Sumber serat, mikronutrien, dan vitamin)."
-        )
+        catatan.append("❌ Belum ada Sayuran (Sumber serat, mikronutrien, dan vitamin).")
 
-      if f_buah not in ["-- Pilih Menu --", "Tidak Ada"]:
-        skor_piring += 15
+      # Analisis Buah-buahan (Ideal ~150g)
+      if f_buah not in ["-- Pilih Menu --", "Tidak Ada"] and g_buah > 0:
+        if g_buah >= 50:
+          skor_piring += 20
+        else:
+          skor_piring += 10
+          catatan.append("⚠️ Porsi Buah terlalu sedikit.")
       else:
-        catatan.append(
-            "⚠️ Belum ada Buah-buahan sebagai suplemen vitamin alami."
-        )
+        catatan.append("⚠️ Belum ada Buah-buahan sebagai suplemen vitamin alami.")
 
+      # Menampilkan Skor Akhir
       st.markdown(
           f'<div class="section-title" style="color:#38BDF8; margin-top:20px;'
           f' margin-bottom:10px;">Skor Nutrisi Piringmu: {skor_piring} /'
@@ -619,10 +617,11 @@ elif menu == "Edukasi & Tools Gizi":
           unsafe_allow_html=True,
       )
 
-      if skor_piring >= 85 and f_lauk_h not in ["-- Pilih Menu --", "Tidak Ada"]:
+      # Kesimpulan
+      if skor_piring >= 85 and f_lauk_h not in ["-- Pilih Menu --", "Tidak Ada"] and g_lauk_h > 0:
         st.success(
-            "🎉 **Gizi Seimbang Sempurna!** Piring makanmu sudah memenuhi"
-            " kriteria Isi Piringku Kemenkes RI. Pertahankan pola makan sehat"
+            "🎉 **Gizi Seimbang Sempurna!** Porsi dan jenis makananmu sudah memenuhi"
+            " standar Isi Piringku Kemenkes RI. Pertahankan pola makan sehat"
             " ini ya!"
         )
       else:
